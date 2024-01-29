@@ -10,10 +10,10 @@ class State(Enum):
     IN_DELIVERY = "in_delivery"
     CLOSED = "closed"
 
-
     @classmethod
     def has_value(cls, value):
         return value in cls._value2member_map_
+
 
 class Responsible(Enum):
     L1 = "L1"
@@ -24,28 +24,34 @@ class Responsible(Enum):
     def has_value(cls, value):
         return value in cls._value2member_map_
 
-
     # Get the ticket id from the user and close ticket status
-def close_ticket(case_id, case_list):
+
+
+def close_ticket(case_id, case_list, closed_list):
     print("Close ticket {}".format(case_id))
     for case in case_list:
-        if (case['id'] == case_id):
+        if case['id'] == case_id:
+            if case['responsible'] != Responsible.L1.value:
+                print("Only L1 can close the ticket")
+                return False
             case['state'] = State.CLOSED.value
-            return case
+            case_list.remove(case)
+            closed_list.append(case)
+            return True
     print("Invalid id : ticket not found")
-    return {}
+    return False
 
 
-## Ticket creation with id,customer name and description
+# Ticket creation with id,customer name and description
 def create_ticket(id, name, description, type, case_list):
     print("Create ticket {}".format(id))
-    if (not re.match("^Case-\d\d\d$", id)):
+    if not re.match("^Case-\d\d\d$", id):
         raise Exception("ID is not in format Case-XXX where X represents a digit.")
-    if (len(id) == 0 or len(name) == 0 or len(description) == 0):
+    if len(id) == 0 or len(name) == 0 or len(description) == 0:
         raise Exception("One or more fields are empty, please fill all the details.")
-    if (not re.match("^\w+$", name)):
+    if not re.match("^\w+$", name):
         raise Exception("Name is not alphanumeric.")
-    if (type != "PR" and type != "IR"):
+    if type != "PR" and type != "IR":
         raise Exception("Type is not PR or IR.")
     for ticket in case_list:
         if ticket['id'] == id:
@@ -61,7 +67,7 @@ def create_ticket(id, name, description, type, case_list):
     case_list.append(ticket)
 
 
-## get a issue and print the details of it
+# get a issue and print the details of it
 def print_one_ticket(case_id, case_list):
     print("Display one ticket information {}".format(case_id))
     for ticket in case_list:
@@ -77,27 +83,27 @@ def print_one_ticket(case_id, case_list):
     return False
 
 
-## Get a keyword from user and search issues that contain that substring
+# Get a keyword from user and search issues that contain that substring
 def search_tickets(keyword, case_list):
     found = False
     print("Search keyword {}".format(keyword))
     for ticket in case_list:
-        if (keyword in ticket['id'] or keyword in ticket['name'] or keyword in ticket['details']):
+        if keyword in ticket['id'] or keyword in ticket['name'] or keyword in ticket['details'] or keyword in ticket['type'] or keyword in ticket['state'] or keyword in ticket['responsible']:
             print_one_ticket(ticket['id'], case_list)
             print("")
             found = True
-    if not (found):
+    if not found:
         print("Keyword {} not found".format(keyword))
     return found
 
 
-## Update an issue in backlog
+# Update an issue in backlog
 def update_ticket(case_id, new_state, new_assign, ticketlist):
     if (new_state != "" and (
             new_state != State.ANALYSIS.value and new_state != State.SOLVED.value and new_state != State.IN_DELIVERY.value)):
         print("Invalid state {}".format(new_state))
         return False
-    if new_assign != "" and Responsible.has_value(new_assign) == False:
+    if new_assign != "" and Responsible.has_value(new_assign) is False:
         print("Invalid assign {}".format(new_assign))
         return False
     print("Assign ticket {} to {}".format(case_id, new_assign))
@@ -113,9 +119,10 @@ def update_ticket(case_id, new_state, new_assign, ticketlist):
 
 
 if __name__ == "__main__":
-    ## An infinite loop for menu that constantly asks user for their selection
-    ## Does operations selected by the input
+    # An infinite loop for menu that constantly asks user for their selection
+    # Does operations selected by the input
     backlog = []
+    closed_backlog = []
 
     while 1:
         print("\n1. Create a ticket")
@@ -131,7 +138,7 @@ if __name__ == "__main__":
             name = input("Customer name: ")
             description = input("Case description: ")
             type = input("Case type: ")
-            ## Detect problems in createIssue function and display error message to user
+            # Detect problems in createIssue function and display error message to user
             try:
                 create_ticket(id, name, description, type, backlog)
             except Exception as exception:
@@ -143,9 +150,7 @@ if __name__ == "__main__":
             update_ticket(id, state, assign_name, backlog)
         elif val == '3':  # Close a ticket
             id = input("Id: ")
-            issue = close_ticket(id, backlog)
-            if issue != {}:
-                backlog.remove(issue)
+            close_ticket(id, backlog, closed_backlog)
         elif val == '4':  # Search issues
             keyword = input("Keyword: ")
             search_tickets(keyword, backlog)
