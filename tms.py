@@ -30,11 +30,11 @@ class Responsible(Enum):
 def close_ticket(case_id, case_list, closed_list):
     print("Close ticket {}".format(case_id))
     for case in case_list:
-        if case['id'] == case_id:
-            if case['responsible'] != Responsible.L1.value:
+        if case["id"] == case_id:
+            if case["responsible"] != Responsible.L1.value:
                 print("Only L1 can close the ticket")
                 return False
-            case['state'] = State.CLOSED.value
+            case["state"] = State.CLOSED.value
             case_list.remove(case)
             closed_list.append(case)
             return True
@@ -44,7 +44,6 @@ def close_ticket(case_id, case_list, closed_list):
 
 # Ticket creation with id,customer name and description
 def create_ticket(id, name, description, type, case_list):
-    print("Create ticket {}".format(id))
     if not re.match("^Case-\d\d\d$", id):
         raise Exception("ID is not in format Case-XXX where X represents a digit.")
     if len(id) == 0 or len(name) == 0 or len(description) == 0:
@@ -54,16 +53,17 @@ def create_ticket(id, name, description, type, case_list):
     if type != "PR" and type != "IR":
         raise Exception("Type is not PR or IR.")
     for ticket in case_list:
-        if ticket['id'] == id:
+        if ticket["id"] == id:
             raise Exception("ID already exists.")
+    print("Create ticket {}".format(id))
     ticket = {}
-    ticket['id'] = id
-    ticket['name'] = name
-    ticket['type'] = type
-    ticket['details'] = description
-    ticket['date'] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    ticket['state'] = State.NEW.value
-    ticket['responsible'] = Responsible.L1.value
+    ticket["id"] = id
+    ticket["name"] = name
+    ticket["type"] = type
+    ticket["details"] = description
+    ticket["date"] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    ticket["state"] = State.NEW.value
+    ticket["responsible"] = Responsible.L1.value
     case_list.append(ticket)
 
 
@@ -71,13 +71,13 @@ def create_ticket(id, name, description, type, case_list):
 def print_one_ticket(case_id, case_list):
     print("Display one ticket information {}".format(case_id))
     for ticket in case_list:
-        if ticket['id'] == case_id:
-            print("Ticket ", "id : ", ticket['id'])
-            print("Ticket ", "name : ", ticket['name'])
-            print("Ticket ", "details : ", ticket['details'])
-            print("Ticket ", "date : ", ticket['date'])
-            print("Ticket ", "state : ", ticket['state'])
-            print("Ticket ", "responsible : ", ticket['responsible'])
+        if ticket["id"] == case_id:
+            print("Ticket ", "id : ", ticket["id"])
+            print("Ticket ", "name : ", ticket["name"])
+            print("Ticket ", "details : ", ticket["details"])
+            print("Ticket ", "date : ", ticket["date"])
+            print("Ticket ", "state : ", ticket["state"])
+            print("Ticket ", "responsible : ", ticket["responsible"])
             return True
     print("Invalid id : ticket not found")
     return False
@@ -88,8 +88,15 @@ def search_tickets(keyword, case_list):
     found = False
     print("Search keyword {}".format(keyword))
     for ticket in case_list:
-        if keyword in ticket['id'] or keyword in ticket['name'] or keyword in ticket['details'] or keyword in ticket['type'] or keyword in ticket['state'] or keyword in ticket['responsible']:
-            print_one_ticket(ticket['id'], case_list)
+        if (
+            keyword in ticket["id"]
+            or keyword in ticket["name"]
+            or keyword in ticket["details"]
+            or keyword in ticket["type"]
+            or keyword in ticket["state"]
+            or keyword in ticket["responsible"]
+        ):
+            print_one_ticket(ticket["id"], case_list)
             print("")
             found = True
     if not found:
@@ -99,8 +106,11 @@ def search_tickets(keyword, case_list):
 
 # Update an issue in backlog
 def update_ticket(case_id, new_state, new_assign, ticketlist):
-    if (new_state != "" and (
-            new_state != State.ANALYSIS.value and new_state != State.SOLVED.value and new_state != State.IN_DELIVERY.value)):
+    if new_state != "" and (
+        new_state != State.ANALYSIS.value
+        and new_state != State.SOLVED.value
+        and new_state != State.IN_DELIVERY.value
+    ):
         print("Invalid state {}".format(new_state))
         return False
     if new_assign != "" and Responsible.has_value(new_assign) is False:
@@ -108,11 +118,11 @@ def update_ticket(case_id, new_state, new_assign, ticketlist):
         return False
     print("Assign ticket {} to {}".format(case_id, new_assign))
     for ticket in ticketlist:
-        if ticket['id'] == case_id:
+        if ticket["id"] == case_id:
             if new_state != "":
-                ticket['state'] = new_state
+                ticket["state"] = new_state
             if new_assign != "":
-                ticket['responsible'] = new_assign
+                ticket["responsible"] = new_assign
             return True
     print("Invalid id {} : ticket does not exists".format(case_id))
     return False
@@ -133,7 +143,7 @@ if __name__ == "__main__":
         print("6. Sortie")
 
         val = input("\nEnter your selection: ")
-        if val == '1':  # Create a ticket
+        if val == "1":  # Create a ticket
             id = input("Id: ")
             name = input("Customer name: ")
             description = input("Case description: ")
@@ -143,21 +153,21 @@ if __name__ == "__main__":
                 create_ticket(id, name, description, type, backlog)
             except Exception as exception:
                 print("Error while creating a new issue:" + str(exception))
-        elif val == '2':  # Assign a ticket
+        elif val == "2":  # Assign a ticket
             id = input("Id: ")
             state = input("State: ")
             assign_name = input("Assigned to: ")
             update_ticket(id, state, assign_name, backlog)
-        elif val == '3':  # Close a ticket
+        elif val == "3":  # Close a ticket
             id = input("Id: ")
             close_ticket(id, backlog, closed_backlog)
-        elif val == '4':  # Search issues
+        elif val == "4":  # Search issues
             keyword = input("Keyword: ")
             search_tickets(keyword, backlog)
-        elif val == '5':  # Display issue
+        elif val == "5":  # Display issue
             Id = input("Id: ")
             print_one_ticket(Id, backlog)
-        elif val == '6':  # Sortie
+        elif val == "6":  # Sortie
             break
         else:
             print("Invalid selection")
