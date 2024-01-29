@@ -68,13 +68,13 @@ def search_tickets(keyword, case_list):
     return found
 
 
-## Assign an issue in backlog by updating id from user 
-def assign_ticket(case_id, case_assign, ticketlist):
-    print("Assign ticket {} to {}".format(case_id, case_assign))
+## Update an issue in backlog
+def update_ticket(case_id, new_state,  new_assign, ticketlist):
+    print("Assign ticket {} to {}".format(case_id, new_assign))
     for ticket in ticketlist:
         if ticket['id'] == case_id:
-            ticket['state'] = "assigned"
-            ticket['responsible'] = case_assign
+            ticket['state'] = new_state
+            ticket['responsible'] = new_assign
             return True
     print("Invalid id {} : ticket does not exists".format(case_id))
     return False
@@ -107,7 +107,7 @@ if __name__ == "__main__":
         elif val == '2':  # Assign a ticket
             id = input("Id: ")
             assign_name = input("Assigned to: ")
-            assign_ticket(id, assign_name, backlog)
+            update_ticket(id, assign_name, backlog)
         elif val == '3':  # Close a ticket
             id = input("Id: ")
             issue = close_ticket(id, backlog)
