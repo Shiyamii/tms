@@ -11,7 +11,21 @@ class State(Enum):
     CLOSED = "closed"
 
 
-# Get the ticket id from the user and close ticket status
+    @classmethod
+    def has_value(cls, value):
+        return value in cls._value2member_map_
+
+class Responsible(Enum):
+    L1 = "L1"
+    L2 = "L2"
+    L3 = "L3"
+
+    @classmethod
+    def has_value(cls, value):
+        return value in cls._value2member_map_
+
+
+    # Get the ticket id from the user and close ticket status
 def close_ticket(case_id, case_list):
     print("Close ticket {}".format(case_id))
     for case in case_list:
@@ -43,7 +57,7 @@ def create_ticket(id, name, description, type, case_list):
     ticket['details'] = description
     ticket['date'] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     ticket['state'] = State.NEW.value
-    ticket['responsible'] = "L1"
+    ticket['responsible'] = Responsible.L1.value
     case_list.append(ticket)
 
 
@@ -83,11 +97,16 @@ def update_ticket(case_id, new_state, new_assign, ticketlist):
             new_state != State.ANALYSIS.value and new_state != State.SOLVED.value and new_state != State.IN_DELIVERY.value)):
         print("Invalid state {}".format(new_state))
         return False
+    if new_assign != "" and Responsible.has_value(new_assign) == False:
+        print("Invalid assign {}".format(new_assign))
+        return False
     print("Assign ticket {} to {}".format(case_id, new_assign))
     for ticket in ticketlist:
         if ticket['id'] == case_id:
-            ticket['state'] = new_state
-            ticket['responsible'] = new_assign
+            if new_state != "":
+                ticket['state'] = new_state
+            if new_assign != "":
+                ticket['responsible'] = new_assign
             return True
     print("Invalid id {} : ticket does not exists".format(case_id))
     return False
