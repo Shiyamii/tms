@@ -3,7 +3,7 @@ import unittest
 import tms
 
 
-class TestTms(unittest.TestCase):
+class CreateTicketTest(unittest.TestCase):
     def setUp(self):
         self.backlog = []
         self.ticket = {
@@ -91,5 +91,27 @@ class TestTms(unittest.TestCase):
             )
 
 
+class UpdateTicketTest(unittest.TestCase):
+    def setUp(self):
+        self.backlog = []
+        self.ticket = {
+            "id": "Case-001",
+            "name": "IUT",
+            "type": "PR",
+            "details": "IUT is not working",
+            "date": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+            "state": tms.State.NEW.value,
+            "responsible": tms.Responsible.L1.value,
+        }
+
+
+def suite():
+    suite = unittest.TestSuite()
+    suite.addTest(CreateTicketTest("test_default_widget_size"))
+    suite.addTest(UpdateTicketTest("test_widget_resize"))
+    return suite
+
+
 if __name__ == "__main__":
-    unittest.main()
+    runner = unittest.TextTestRunner()
+    runner.run(suite())
