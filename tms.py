@@ -1,5 +1,14 @@
 import re
 import datetime
+from enum import Enum
+
+
+class State(Enum):
+    NEW = "new"
+    ANALYSIS = "analysis"
+    SOLVED = "solved"
+    IN_DELIVERY = "in_delivery"
+    CLOSED = "closed"
 
 
 # Get the ticket id from the user and close ticket status
@@ -7,7 +16,7 @@ def close_ticket(case_id, case_list):
     print("Close ticket {}".format(case_id))
     for case in case_list:
         if (case['id'] == case_id):
-            case['state'] = "closed"
+            case['state'] = State.CLOSED.value
             return case
     print("Invalid id : ticket not found")
     return {}
@@ -33,7 +42,7 @@ def create_ticket(id, name, description, type, case_list):
     ticket['type'] = type
     ticket['details'] = description
     ticket['date'] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    ticket['state'] = "new"
+    ticket['state'] = State.NEW.value
     ticket['responsible'] = "L1"
     case_list.append(ticket)
 
@@ -69,7 +78,11 @@ def search_tickets(keyword, case_list):
 
 
 ## Update an issue in backlog
-def update_ticket(case_id, new_state,  new_assign, ticketlist):
+def update_ticket(case_id, new_state, new_assign, ticketlist):
+    if (new_state != "" and (
+            new_state != State.ANALYSIS.value and new_state != State.SOLVED.value and new_state != State.IN_DELIVERY.value)):
+        print("Invalid state {}".format(new_state))
+        return False
     print("Assign ticket {} to {}".format(case_id, new_assign))
     for ticket in ticketlist:
         if ticket['id'] == case_id:
@@ -87,7 +100,7 @@ if __name__ == "__main__":
 
     while 1:
         print("\n1. Create a ticket")
-        print("2. Assign a ticket")
+        print("2. Update a ticket")
         print("3. Close a ticket")
         print("4. Search keyword")
         print("5. Display issue from backlog")
@@ -106,8 +119,9 @@ if __name__ == "__main__":
                 print("Error while creating a new issue:" + str(exception))
         elif val == '2':  # Assign a ticket
             id = input("Id: ")
+            state = input("State: ")
             assign_name = input("Assigned to: ")
-            update_ticket(id, assign_name, backlog)
+            update_ticket(id, state, assign_name, backlog)
         elif val == '3':  # Close a ticket
             id = input("Id: ")
             issue = close_ticket(id, backlog)
