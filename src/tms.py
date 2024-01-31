@@ -128,7 +128,7 @@ def update_ticket(case_id, new_state, new_assign, ticketlist):
     return False
 
 
-if __name__ == "__main__":
+def main():
     # An infinite loop for menu that constantly asks user for their selection
     # Does operations selected by the input
     backlog = []

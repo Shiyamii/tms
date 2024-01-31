@@ -1,6 +1,6 @@
 import datetime
 import unittest
-import tms
+from src import tms
 
 
 class CreateTicketTest(unittest.TestCase):
