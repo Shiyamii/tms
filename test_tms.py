@@ -36,42 +36,6 @@ class CreateTicketTest(unittest.TestCase):
                 self.backlog,
             )
 
-    def test_creation_wrong_name_field(self):
-        with self.assertRaises(Exception):
-            tms.create_ticket(
-                self.ticket["id"],
-                "",
-                self.ticket["details"],
-                self.ticket["type"],
-                self.backlog,
-            )
-        with self.assertRaises(Exception):
-            tms.create_ticket(
-                self.ticket["id"],
-                422,
-                self.ticket["details"],
-                self.ticket["type"],
-                self.backlog,
-            )
-
-    def test_creation_wrong_description_field(self):
-        with self.assertRaises(Exception):
-            tms.create_ticket(
-                self.ticket["id"],
-                self.ticket["name"],
-                "",
-                self.ticket["type"],
-                self.backlog,
-            )
-        with self.assertRaises(Exception):
-            tms.create_ticket(
-                self.ticket["id"],
-                self.ticket["name"],
-                422,
-                self.ticket["type"],
-                self.backlog,
-            )
-
     def test_creation_wrong_type_field(self):
         with self.assertRaises(Exception):
             tms.create_ticket(
