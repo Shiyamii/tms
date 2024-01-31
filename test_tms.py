@@ -164,6 +164,18 @@ class SearchTicketTest(unittest.TestCase):
         }
         self.backlog = [self.ticket]
 
+    def test_search_ticket_by_type(self):
+        found = tms.search_tickets("PR", self.backlog)
+        self.assertTrue(found)
+
+    def test_search_ticket_by_state(self):
+        found = tms.search_tickets(tms.State.NEW.value, self.backlog)
+        self.assertTrue(found)
+
+    def test_search_ticket_by_responsible(self):
+        found = tms.search_tickets(tms.Responsible.L1.value, self.backlog)
+        self.assertTrue(found)
+
 
 def suite():
     suite = unittest.TestSuite()
