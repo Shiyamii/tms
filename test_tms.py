@@ -129,6 +129,26 @@ class CloseTicketTest(unittest.TestCase):
             "responsible": tms.Responsible.L1.value,
         }
         self.backlog = [self.ticket]
+        self.closed_backlog = []
+
+    def test_close_ticket(self):
+        success = tms.close_ticket(self.ticket["id"], self.backlog, self.closed_backlog)
+        self.assertEqual(self.closed_backlog[0], self.ticket)
+        self.assertEqual(self.backlog, [])
+        self.assertTrue(success)
+
+    def test_close_ticket_invalid_id(self):
+        success = tms.close_ticket("Case-002", self.backlog, self.closed_backlog)
+        self.assertEqual(self.closed_backlog, [])
+        self.assertEqual(self.backlog[0], self.ticket)
+        self.assertFalse(success)
+
+    def test_wrong_responsible(self):
+        self.ticket["responsible"] = tms.Responsible.L2.value
+        success = tms.close_ticket(self.ticket["id"], self.backlog, self.closed_backlog)
+        self.assertEqual(self.closed_backlog, [])
+        self.assertEqual(self.backlog[0], self.ticket)
+        self.assertFalse(success)
 
 
 def suite():
