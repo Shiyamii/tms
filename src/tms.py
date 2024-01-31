@@ -1,30 +1,6 @@
 import re
 import datetime
-from enum import Enum
-
-
-class State(Enum):
-    NEW = "new"
-    ANALYSIS = "analysis"
-    SOLVED = "solved"
-    IN_DELIVERY = "in_delivery"
-    CLOSED = "closed"
-
-    @classmethod
-    def has_value(cls, value):
-        return value in cls._value2member_map_
-
-
-class Responsible(Enum):
-    L1 = "L1"
-    L2 = "L2"
-    L3 = "L3"
-
-    @classmethod
-    def has_value(cls, value):
-        return value in cls._value2member_map_
-
-    # Get the ticket id from the user and close ticket status
+from constants import State, Responsible, Type
 
 
 def close_ticket(case_id, case_list, closed_list):
@@ -50,7 +26,7 @@ def create_ticket(id, name, description, type, case_list):
         raise Exception("One or more fields are empty, please fill all the details.")
     if not re.match("^\w+$", name):
         raise Exception("Name is not alphanumeric.")
-    if type != "PR" and type != "IR":
+    if Type.has_value(type) is False:
         raise Exception("Type is not PR or IR.")
     for ticket in case_list:
         if ticket["id"] == id:
