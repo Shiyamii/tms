@@ -121,20 +121,19 @@ class UpdateTicketTest(unittest.TestCase):
 
 class CloseTicketTest(unittest.TestCase):
     def setUp(self):
-        self.ticket = {
-            "id": "Case-001",
-            "name": "IUT",
-            "type": "PR",
-            "details": "IUT is not working",
-            "date": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-            "state": State.NEW.value,
-            "responsible": Responsible.L1.value,
-        }
+        self.ticket = Ticket(
+            "Case-001",
+            "IUT",
+            "IUT is not working",
+            Type.PR,
+            State.NEW,
+            Responsible.L1,
+        )
         self.backlog = [self.ticket]
         self.closed_backlog = []
 
     def test_close_ticket(self):
-        success = tms.close_ticket(self.ticket["id"], self.backlog, self.closed_backlog)
+        success = tms.close_ticket(self.ticket.id, self.backlog, self.closed_backlog)
         self.assertEqual(self.closed_backlog[0], self.ticket)
         self.assertEqual(self.backlog, [])
         self.assertTrue(success)
@@ -146,8 +145,8 @@ class CloseTicketTest(unittest.TestCase):
         self.assertFalse(success)
 
     def test_wrong_responsible(self):
-        self.ticket["responsible"] = tms.Responsible.L2.value
-        success = tms.close_ticket(self.ticket["id"], self.backlog, self.closed_backlog)
+        self.ticket.responsible = Responsible.L2
+        success = tms.close_ticket(self.ticket.id, self.backlog, self.closed_backlog)
         self.assertEqual(self.closed_backlog, [])
         self.assertEqual(self.backlog[0], self.ticket)
         self.assertFalse(success)

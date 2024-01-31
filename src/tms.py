@@ -3,14 +3,14 @@ from src.ticket import Ticket
 from src.constants import State, Responsible, Type
 
 
-def close_ticket(case_id, case_list, closed_list):
+def close_ticket(case_id, case_list: list[Ticket], closed_list: list[Ticket]):
     print("Close ticket {}".format(case_id))
     for case in case_list:
-        if case["id"] == case_id:
-            if case["responsible"] != Responsible.L1.value:
+        if case.id == case_id:
+            if case.responsible != Responsible.L1:
                 print("Only L1 can close the ticket")
                 return False
-            case["state"] = State.CLOSED.value
+            case.state = State.CLOSED
             case_list.remove(case)
             closed_list.append(case)
             return True
@@ -19,7 +19,7 @@ def close_ticket(case_id, case_list, closed_list):
 
 
 # Ticket creation with id,customer name and description
-def create_ticket(id, name, description, type, case_list):
+def create_ticket(id, name, description, type, case_list: list[Ticket]):
     if not re.match("^Case-\d\d\d$", id):
         raise Exception("ID is not in format Case-XXX where X represents a digit.")
     if len(id) == 0 or len(name) == 0 or len(description) == 0:
