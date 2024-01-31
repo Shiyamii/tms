@@ -1,6 +1,6 @@
 import re
-import datetime
-from constants import State, Responsible, Type
+from src.ticket import Ticket
+from src.constants import State, Responsible, Type
 
 
 def close_ticket(case_id, case_list, closed_list):
@@ -26,20 +26,13 @@ def create_ticket(id, name, description, type, case_list):
         raise Exception("One or more fields are empty, please fill all the details.")
     if not re.match("^\w+$", name):
         raise Exception("Name is not alphanumeric.")
-    if Type.has_value(type) is False:
+    if Type.has_value(type.value) is False:
         raise Exception("Type is not PR or IR.")
     for ticket in case_list:
         if ticket["id"] == id:
             raise Exception("ID already exists.")
     print("Create ticket {}".format(id))
-    ticket = {}
-    ticket["id"] = id
-    ticket["name"] = name
-    ticket["type"] = type
-    ticket["details"] = description
-    ticket["date"] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    ticket["state"] = State.NEW.value
-    ticket["responsible"] = Responsible.L1.value
+    ticket = Ticket(id, name, description, type, State.NEW, Responsible.L1)
     case_list.append(ticket)
 
 

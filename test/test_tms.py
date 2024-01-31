@@ -1,73 +1,75 @@
 import datetime
 import unittest
 from src import tms
+from src.ticket import Ticket
+from src.constants import State, Responsible, Type
 
 
 class CreateTicketTest(unittest.TestCase):
     def setUp(self):
         self.backlog = []
-        self.ticket = {
-            "id": "Case-001",
-            "name": "IUT",
-            "type": "PR",
-            "details": "IUT is not working",
-            "date": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-            "state": tms.State.NEW.value,
-            "responsible": tms.Responsible.L1.value,
-        }
+        self.ticket = Ticket(
+            "Case-001",
+            "IUT",
+            "IUT is not working",
+            Type.PR,
+            State.NEW,
+            Responsible.L1,
+        )
 
     def test_creation(self):
         tms.create_ticket(
-            self.ticket["id"],
-            self.ticket["name"],
-            self.ticket["details"],
-            self.ticket["type"],
+            self.ticket.id,
+            self.ticket.name,
+            self.ticket.details,
+            self.ticket.type,
             self.backlog,
         )
-        self.assertEqual(self.backlog[0], self.ticket)
+        self.assertTrue(self.ticket.__eq__(self.backlog[0]))
 
     def test_creation_invalid_id(self):
         with self.assertRaises(Exception):
             tms.create_ticket(
                 "Case-",
-                self.ticket["name"],
-                self.ticket["details"],
-                self.ticket["type"],
+                self.ticket.name,
+                self.ticket.details,
+                self.ticket.type,
                 self.backlog,
             )
 
     def test_creation_wrong_type_field(self):
         with self.assertRaises(Exception):
             tms.create_ticket(
-                self.ticket["id"],
-                self.ticket["name"],
-                self.ticket["details"],
+                self.ticket.id,
+                self.ticket.name,
+                self.ticket.details,
                 "PRR",
                 self.backlog,
             )
         with self.assertRaises(Exception):
             tms.create_ticket(
-                self.ticket["id"],
-                self.ticket["name"],
-                self.ticket["details"],
+                self.ticket.id,
+                self.ticket.name,
+                self.ticket.details,
                 422,
                 self.backlog,
             )
 
     def test_same_id(self):
         tms.create_ticket(
-            self.ticket["id"],
-            self.ticket["name"],
-            self.ticket["details"],
-            self.ticket["type"],
+            self.ticket.id,
+            self.ticket.name,
+            self.ticket.details,
+            self.ticket.type,
             self.backlog,
         )
+        self.assertTrue(self.ticket.__eq__(self.backlog[0]))
         with self.assertRaises(Exception):
             tms.create_ticket(
-                self.ticket["id"],
-                self.ticket["name"],
-                self.ticket["details"],
-                self.ticket["type"],
+                self.ticket.id,
+                self.ticket.name,
+                self.ticket.details,
+                self.ticket.type,
                 self.backlog,
             )
 
@@ -80,39 +82,39 @@ class UpdateTicketTest(unittest.TestCase):
             "type": "PR",
             "details": "IUT is not working",
             "date": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-            "state": tms.State.NEW.value,
-            "responsible": tms.Responsible.L1.value,
+            "state": State.NEW.value,
+            "responsible": Responsible.L1.value,
         }
         self.backlog = [self.ticket]
 
     def test_update_ticket(self):
         success = tms.update_ticket(
             self.ticket["id"],
-            tms.State.ANALYSIS.value,
-            tms.Responsible.L2.value,
+            State.ANALYSIS.value,
+            Responsible.L2.value,
             self.backlog,
         )
-        self.assertEqual(self.backlog[0]["state"], tms.State.ANALYSIS.value)
-        self.assertEqual(self.backlog[0]["responsible"], tms.Responsible.L2.value)
+        self.assertEqual(self.backlog[0]["state"], State.ANALYSIS.value)
+        self.assertEqual(self.backlog[0]["responsible"], Responsible.L2.value)
         self.assertTrue(success)
 
     def test_wrong_state(self):
         success = tms.update_ticket(
-            self.ticket["id"], "WRONG", tms.Responsible.L2.value, self.backlog
+            self.ticket["id"], "WRONG", Responsible.L2.value, self.backlog
         )
-        self.assertEqual(self.backlog[0]["state"], tms.State.NEW.value)
-        self.assertEqual(self.backlog[0]["responsible"], tms.Responsible.L1.value)
+        self.assertEqual(self.backlog[0]["state"], State.NEW.value)
+        self.assertEqual(self.backlog[0]["responsible"], Responsible.L1.value)
         self.assertNotEqual(self.backlog[0]["state"], "WRONG")
-        self.assertNotEqual(self.backlog[0]["responsible"], tms.Responsible.L2.value)
+        self.assertNotEqual(self.backlog[0]["responsible"], Responsible.L2.value)
         self.assertFalse(success)
 
     def test_wrong_responsible(self):
         success = tms.update_ticket(
-            self.ticket["id"], tms.State.ANALYSIS.value, "WRONG", self.backlog
+            self.ticket["id"], State.ANALYSIS.value, "WRONG", self.backlog
         )
-        self.assertEqual(self.backlog[0]["state"], tms.State.NEW.value)
-        self.assertEqual(self.backlog[0]["responsible"], tms.Responsible.L1.value)
-        self.assertNotEqual(self.backlog[0]["state"], tms.State.ANALYSIS.value)
+        self.assertEqual(self.backlog[0]["state"], State.NEW.value)
+        self.assertEqual(self.backlog[0]["responsible"], Responsible.L1.value)
+        self.assertNotEqual(self.backlog[0]["state"], State.ANALYSIS.value)
         self.assertNotEqual(self.backlog[0]["responsible"], "WRONG")
         self.assertFalse(success)
 
@@ -125,8 +127,8 @@ class CloseTicketTest(unittest.TestCase):
             "type": "PR",
             "details": "IUT is not working",
             "date": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-            "state": tms.State.NEW.value,
-            "responsible": tms.Responsible.L1.value,
+            "state": State.NEW.value,
+            "responsible": Responsible.L1.value,
         }
         self.backlog = [self.ticket]
         self.closed_backlog = []
@@ -159,8 +161,8 @@ class SearchTicketTest(unittest.TestCase):
             "type": "PR",
             "details": "IUT is not working",
             "date": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-            "state": tms.State.NEW.value,
-            "responsible": tms.Responsible.L1.value,
+            "state": State.NEW.value,
+            "responsible": Responsible.L1.value,
         }
         self.backlog = [self.ticket]
 
@@ -169,11 +171,11 @@ class SearchTicketTest(unittest.TestCase):
         self.assertTrue(found)
 
     def test_search_ticket_by_state(self):
-        found = tms.search_tickets(tms.State.NEW.value, self.backlog)
+        found = tms.search_tickets(State.NEW.value, self.backlog)
         self.assertTrue(found)
 
     def test_search_ticket_by_responsible(self):
-        found = tms.search_tickets(tms.Responsible.L1.value, self.backlog)
+        found = tms.search_tickets(Responsible.L1.value, self.backlog)
         self.assertTrue(found)
 
 
