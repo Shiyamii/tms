@@ -74,7 +74,6 @@ class CreateTicketTest(unittest.TestCase):
 
 class UpdateTicketTest(unittest.TestCase):
     def setUp(self):
-        self.backlog = []
         self.ticket = {
             "id": "Case-001",
             "name": "IUT",
@@ -84,6 +83,38 @@ class UpdateTicketTest(unittest.TestCase):
             "state": tms.State.NEW.value,
             "responsible": tms.Responsible.L1.value,
         }
+        self.backlog = [self.ticket]
+
+    def test_update_ticket(self):
+        success = tms.update_ticket(
+            self.ticket["id"],
+            tms.State.ANALYSIS.value,
+            tms.Responsible.L2.value,
+            self.backlog,
+        )
+        self.assertEqual(self.backlog[0]["state"], tms.State.ANALYSIS.value)
+        self.assertEqual(self.backlog[0]["responsible"], tms.Responsible.L2.value)
+        self.assertTrue(success)
+
+    def test_wrong_state(self):
+        success = tms.update_ticket(
+            self.ticket["id"], "WRONG", tms.Responsible.L2.value, self.backlog
+        )
+        self.assertEqual(self.backlog[0]["state"], tms.State.NEW.value)
+        self.assertEqual(self.backlog[0]["responsible"], tms.Responsible.L1.value)
+        self.assertNotEqual(self.backlog[0]["state"], "WRONG")
+        self.assertNotEqual(self.backlog[0]["responsible"], tms.Responsible.L2.value)
+        self.assertFalse(success)
+
+    def test_wrong_responsible(self):
+        success = tms.update_ticket(
+            self.ticket["id"], tms.State.ANALYSIS.value, "WRONG", self.backlog
+        )
+        self.assertEqual(self.backlog[0]["state"], tms.State.NEW.value)
+        self.assertEqual(self.backlog[0]["responsible"], tms.Responsible.L1.value)
+        self.assertNotEqual(self.backlog[0]["state"], tms.State.ANALYSIS.value)
+        self.assertNotEqual(self.backlog[0]["responsible"], "WRONG")
+        self.assertFalse(success)
 
 
 def suite():
