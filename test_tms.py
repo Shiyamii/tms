@@ -117,10 +117,25 @@ class UpdateTicketTest(unittest.TestCase):
         self.assertFalse(success)
 
 
+class CloseTicketTest(unittest.TestCase):
+    def setUp(self):
+        self.ticket = {
+            "id": "Case-001",
+            "name": "IUT",
+            "type": "PR",
+            "details": "IUT is not working",
+            "date": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+            "state": tms.State.NEW.value,
+            "responsible": tms.Responsible.L1.value,
+        }
+        self.backlog = [self.ticket]
+
+
 def suite():
     suite = unittest.TestSuite()
-    suite.addTest(CreateTicketTest("test_default_widget_size"))
-    suite.addTest(UpdateTicketTest("test_widget_resize"))
+    suite.addTest(CreateTicketTest("test_create_ticket"))
+    suite.addTest(UpdateTicketTest("test_update_ticket"))
+    suite.addTest(CloseTicketTest("test_close_ticket"))
     return suite
 
 
