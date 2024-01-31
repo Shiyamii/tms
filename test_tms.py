@@ -54,6 +54,23 @@ class CreateTicketTest(unittest.TestCase):
                 self.backlog,
             )
 
+    def test_same_id(self):
+        tms.create_ticket(
+            self.ticket["id"],
+            self.ticket["name"],
+            self.ticket["details"],
+            self.ticket["type"],
+            self.backlog,
+        )
+        with self.assertRaises(Exception):
+            tms.create_ticket(
+                self.ticket["id"],
+                self.ticket["name"],
+                self.ticket["details"],
+                self.ticket["type"],
+                self.backlog,
+            )
+
 
 class UpdateTicketTest(unittest.TestCase):
     def setUp(self):
