@@ -24,10 +24,10 @@ class Ticket:
 
     def __contains__(self, item):
         return (
-            item in self.id
-            or item in self.name
-            or item in self.details
-            or item in self.type
-            or item in self.state
-            or item in self.responsible
+            item == self.id
+            or item == self.name
+            or item == self.details
+            or item == self.type
+            or item == self.state
+            or item == self.responsible
         )

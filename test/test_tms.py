@@ -154,27 +154,26 @@ class CloseTicketTest(unittest.TestCase):
 
 class SearchTicketTest(unittest.TestCase):
     def setUp(self):
-        self.ticket = {
-            "id": "Case-001",
-            "name": "IUT",
-            "type": "PR",
-            "details": "IUT is not working",
-            "date": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-            "state": State.NEW.value,
-            "responsible": Responsible.L1.value,
-        }
+        self.ticket = Ticket(
+            "Case-001",
+            "IUT",
+            "IUT is not working",
+            Type.PR,
+            State.NEW,
+            Responsible.L1,
+        )
         self.backlog = [self.ticket]
 
     def test_search_ticket_by_type(self):
-        found = tms.search_tickets("PR", self.backlog)
+        found = tms.search_tickets(Type.PR, self.backlog)
         self.assertTrue(found)
 
     def test_search_ticket_by_state(self):
-        found = tms.search_tickets(State.NEW.value, self.backlog)
+        found = tms.search_tickets(State.NEW, self.backlog)
         self.assertTrue(found)
 
     def test_search_ticket_by_responsible(self):
-        found = tms.search_tickets(Responsible.L1.value, self.backlog)
+        found = tms.search_tickets(Responsible.L1, self.backlog)
         self.assertTrue(found)
 
 

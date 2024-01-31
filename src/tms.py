@@ -40,13 +40,14 @@ def create_ticket(id, name, description, type, case_list: list[Ticket]):
 def print_one_ticket(case_id, case_list):
     print("Display one ticket information {}".format(case_id))
     for ticket in case_list:
-        if ticket["id"] == case_id:
-            print("Ticket ", "id : ", ticket["id"])
-            print("Ticket ", "name : ", ticket["name"])
-            print("Ticket ", "details : ", ticket["details"])
-            print("Ticket ", "date : ", ticket["date"])
-            print("Ticket ", "state : ", ticket["state"])
-            print("Ticket ", "responsible : ", ticket["responsible"])
+        if ticket.id == case_id:
+            print("Ticket ", "id : ", ticket.id)
+            print("Ticket ", "name : ", ticket.name)
+            print("Ticket ", "details : ", ticket.details)
+            print("Ticket ", "date : ", ticket.date)
+            print("Ticket ", "state : ", ticket.state.value)
+            print("Ticket ", "responsible : ", ticket.responsible.value)
+            print("Ticket ", "type : ", ticket.type.value)
             return True
     print("Invalid id : ticket not found")
     return False
@@ -57,15 +58,8 @@ def search_tickets(keyword, case_list):
     found = False
     print("Search keyword {}".format(keyword))
     for ticket in case_list:
-        if (
-            keyword in ticket["id"]
-            or keyword in ticket["name"]
-            or keyword in ticket["details"]
-            or keyword in ticket["type"]
-            or keyword in ticket["state"]
-            or keyword in ticket["responsible"]
-        ):
-            print_one_ticket(ticket["id"], case_list)
+        if ticket.__contains__(keyword):
+            print_one_ticket(ticket.id, case_list)
             print("")
             found = True
     if not found:
