@@ -2,7 +2,7 @@
 
 ## Ticket Management Service
 
-### Version :  ``0``
+### Version :  ``2``
 
 ## Run the project
 
