@@ -19,3 +19,7 @@ execute the following command in the root directory of the project
 ```
 python run_tests.py
 ```
+or 
+```
+python -m unittest discover -s test/
+```
