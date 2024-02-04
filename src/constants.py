@@ -30,3 +30,11 @@ class Type(Enum):
     @classmethod
     def has_value(cls, value):
         return value in cls._value2member_map_
+
+    @classmethod
+    def get_enum(cls, value):
+        if value == "PR":
+            return cls.PR
+        if value == "IR":
+            return cls.IR
+        return None

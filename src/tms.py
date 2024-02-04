@@ -1,6 +1,10 @@
 import re
+
+from src.interface import Interface
 from src.ticket import Ticket
 from src.constants import State, Responsible, Type
+
+interface = Interface()
 
 
 def close_ticket(case_id, case_list: list[Ticket], closed_list: list[Ticket]):
@@ -21,34 +25,35 @@ def close_ticket(case_id, case_list: list[Ticket], closed_list: list[Ticket]):
 # Ticket creation with id,customer name and description
 def create_ticket(id, name, description, type, case_list: list[Ticket]):
     if not re.match("^Case-\d\d\d$", id):
-        raise Exception("ID is not in format Case-XXX where X represents a digit.")
-    if len(id) == 0 or len(name) == 0 or len(description) == 0:
-        raise Exception("One or more fields are empty, please fill all the details.")
+        interface.print_invalid_id()
+        return False
+    if len(description) == 0:
+        interface.print_invalid_details()
+        return False
     if not re.match("^\w+$", name):
-        raise Exception("Name is not alphanumeric.")
-    if Type.has_value(type.value) is False:
-        raise Exception("Type is not PR or IR.")
+        interface.print_invalid_name()
+        return False
+    type = Type.get_enum(type)
+    if type is None:
+        interface.print_invalid_type()
+        return False
     for ticket in case_list:
-        if ticket["id"] == id:
-            raise Exception("ID already exists.")
-    print("Create ticket {}".format(id))
+        if ticket.id == id:
+            interface.print_id_already_exists()
+            return False
     ticket = Ticket(id, name, description, type, State.NEW, Responsible.L1)
+    interface.print_created_ticket(ticket)
     case_list.append(ticket)
+    return True
 
 
 # get a issue and print the details of it
 def print_one_ticket(case_id, case_list):
-    print("Display one ticket information {}".format(case_id))
     for ticket in case_list:
-        if ticket["id"] == case_id:
-            print("Ticket ", "id : ", ticket["id"])
-            print("Ticket ", "name : ", ticket["name"])
-            print("Ticket ", "details : ", ticket["details"])
-            print("Ticket ", "date : ", ticket["date"])
-            print("Ticket ", "state : ", ticket["state"])
-            print("Ticket ", "responsible : ", ticket["responsible"])
+        if ticket.id == case_id:
+            interface.print_searched_ticket(ticket)
             return True
-    print("Invalid id : ticket not found")
+    interface.print_ticket_invalid_id()
     return False
 
 
@@ -58,14 +63,14 @@ def search_tickets(keyword, case_list):
     print("Search keyword {}".format(keyword))
     for ticket in case_list:
         if (
-            keyword in ticket["id"]
-            or keyword in ticket["name"]
-            or keyword in ticket["details"]
-            or keyword in ticket["type"]
-            or keyword in ticket["state"]
-            or keyword in ticket["responsible"]
+            keyword in ticket.id
+            or keyword in ticket.name
+            or keyword in ticket.type.value
+            or keyword in ticket.details
+            or keyword in ticket.state.value
+            or keyword in ticket.responsible.value
         ):
-            print_one_ticket(ticket["id"], case_list)
+            print_one_ticket(ticket.id, case_list)
             print("")
             found = True
     if not found:
@@ -74,24 +79,27 @@ def search_tickets(keyword, case_list):
 
 
 # Update an issue in backlog
-def update_ticket(case_id, new_state, new_assign, ticketlist):
+def update_ticket(case_id, new_state: State, new_assign: Responsible, ticketlist):
     if new_state != "" and (
-        new_state != State.ANALYSIS.value
-        and new_state != State.SOLVED.value
-        and new_state != State.IN_DELIVERY.value
+        (not isinstance(new_state, State))
+        or (
+            new_state != State.ANALYSIS
+            and new_state != State.SOLVED
+            and new_state != State.IN_DELIVERY
+        )
     ):
         print("Invalid state {}".format(new_state))
         return False
-    if new_assign != "" and Responsible.has_value(new_assign) is False:
+    if new_assign != "" and not isinstance(new_assign, Responsible):
         print("Invalid assign {}".format(new_assign))
         return False
     print("Assign ticket {} to {}".format(case_id, new_assign))
     for ticket in ticketlist:
-        if ticket["id"] == case_id:
+        if ticket.id == case_id:
             if new_state != "":
-                ticket["state"] = new_state
+                ticket.state = new_state
             if new_assign != "":
-                ticket["responsible"] = new_assign
+                ticket.responsible = new_assign
             return True
     print("Invalid id {} : ticket does not exists".format(case_id))
     return False
@@ -104,24 +112,12 @@ def main():
     closed_backlog = []
 
     while 1:
-        print("\n1. Create a ticket")
-        print("2. Update a ticket")
-        print("3. Close a ticket")
-        print("4. Search keyword")
-        print("5. Display issue from backlog")
-        print("6. Sortie")
-
-        val = input("\nEnter your selection: ")
+        val = interface.print_main_form()
         if val == "1":  # Create a ticket
-            id = input("Id: ")
-            name = input("Customer name: ")
-            description = input("Case description: ")
-            type = input("Case type: ")
+            id, name, description, type = interface.print_form_create_ticket()
             # Detect problems in createIssue function and display error message to user
-            try:
-                create_ticket(id, name, description, type, backlog)
-            except Exception as exception:
-                print("Error while creating a new issue:" + str(exception))
+
+            create_ticket(id, name, description, type, backlog)
         elif val == "2":  # Assign a ticket
             id = input("Id: ")
             state = input("State: ")
