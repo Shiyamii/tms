@@ -12,6 +12,20 @@ class State(Enum):
     def has_value(cls, value):
         return value in cls._value2member_map_
 
+    @classmethod
+    def get_enum(cls, value):
+        if value == "new":
+            return cls.NEW
+        if value == "analysis":
+            return cls.ANALYSIS
+        if value == "solved":
+            return cls.SOLVED
+        if value == "in_delivery":
+            return cls.IN_DELIVERY
+        if value == "closed":
+            return cls.CLOSED
+        return None
+
 
 class Responsible(Enum):
     L1 = "L1"
@@ -21,6 +35,16 @@ class Responsible(Enum):
     @classmethod
     def has_value(cls, value):
         return value in cls._value2member_map_
+
+    @classmethod
+    def get_enum(cls, value):
+        if value == "L1":
+            return cls.L1
+        if value == "L2":
+            return cls.L2
+        if value == "L3":
+            return cls.L3
+        return None
 
 
 class Type(Enum):

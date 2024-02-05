@@ -18,7 +18,7 @@ def close_ticket(case_id, case_list: list[Ticket], closed_list: list[Ticket]):
             case_list.remove(case)
             closed_list.append(case)
             return True
-    interface.print_ticket_invalid_id()
+    interface.print_ticket_invalid_id(case_id)
     return False
 
 
@@ -53,7 +53,7 @@ def print_one_ticket(case_id, case_list):
         if ticket.id == case_id:
             interface.print_searched_ticket(ticket)
             return True
-    interface.print_ticket_invalid_id()
+    interface.print_ticket_invalid_id(case_id)
     return False
 
 
@@ -78,29 +78,26 @@ def search_tickets(keyword, case_list):
 
 
 # Update an issue in backlog
-def update_ticket(case_id, new_state: State, new_assign: Responsible, ticketlist):
-    if new_state != "" and (
-        (not isinstance(new_state, State))
-        or (
-            new_state != State.ANALYSIS
-            and new_state != State.SOLVED
-            and new_state != State.IN_DELIVERY
-        )
+def update_ticket(case_id, new_state, new_assign, ticketlist):
+    new_state_enum = State.get_enum(new_state)
+    if new_state_enum is None or (
+        new_state_enum != State.ANALYSIS
+        and new_state_enum != State.SOLVED
+        and new_state_enum != State.IN_DELIVERY
     ):
-        print("Invalid state {}".format(new_state))
+        interface.print_invalid_state(new_state)
         return False
-    if new_assign != "" and not isinstance(new_assign, Responsible):
-        print("Invalid assign {}".format(new_assign))
+    new_assign_enum = Responsible.get_enum(new_assign)
+    if new_state is None:
+        interface.print_invalid_responsible(new_assign)
         return False
-    print("Assign ticket {} to {}".format(case_id, new_assign))
+    interface.print_updated_ticket(case_id, new_assign, new_state)
     for ticket in ticketlist:
         if ticket.id == case_id:
-            if new_state != "":
-                ticket.state = new_state
-            if new_assign != "":
-                ticket.responsible = new_assign
+            ticket.state = new_state_enum
+            ticket.responsible = new_assign_enum
             return True
-    print("Invalid id {} : ticket does not exists".format(case_id))
+    interface.print_ticket_invalid_id(case_id)
     return False
 
 

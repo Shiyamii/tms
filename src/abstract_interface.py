@@ -29,7 +29,7 @@ class AbstractInterface(ABC):
         pass
 
     @abstractmethod
-    def print_ticket_invalid_id(self):
+    def print_ticket_invalid_id(self, case_id):
         pass
 
     @abstractmethod
@@ -45,7 +45,7 @@ class AbstractInterface(ABC):
         pass
 
     @abstractmethod
-    def print_updated_ticket(self, ticket: Ticket):
+    def print_updated_ticket(self, case_id, new_assign, new_state):
         pass
 
     @abstractmethod
@@ -81,11 +81,11 @@ class AbstractInterface(ABC):
         pass
 
     @abstractmethod
-    def print_invalid_state(self):
+    def print_invalid_state(self, new_state):
         pass
 
     @abstractmethod
-    def print_invalid_responsible(self):
+    def print_invalid_responsible(self, new_assign):
         pass
 
     @abstractmethod

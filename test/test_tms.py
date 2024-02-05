@@ -94,8 +94,8 @@ class UpdateTicketTest(unittest.TestCase):
     def test_update_ticket(self):
         success = tms.update_ticket(
             self.ticket.id,
-            State.ANALYSIS,
-            Responsible.L2,
+            State.ANALYSIS.value,
+            Responsible.L2.value,
             self.backlog,
         )
         self.assertEqual(self.backlog[0].state, State.ANALYSIS)
@@ -169,15 +169,15 @@ class SearchTicketTest(unittest.TestCase):
         self.backlog = [self.ticket]
 
     def test_search_ticket_by_type(self):
-        found = tms.search_tickets(Type.PR, self.backlog)
+        found = tms.search_tickets(Type.PR.value, self.backlog)
         self.assertTrue(found)
 
     def test_search_ticket_by_state(self):
-        found = tms.search_tickets(State.NEW, self.backlog)
+        found = tms.search_tickets(State.NEW.value, self.backlog)
         self.assertTrue(found)
 
     def test_search_ticket_by_responsible(self):
-        found = tms.search_tickets(Responsible.L1, self.backlog)
+        found = tms.search_tickets(Responsible.L1.value, self.backlog)
         self.assertTrue(found)
 
 

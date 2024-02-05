@@ -36,11 +36,13 @@ class Interface(AbstractInterface):
     def print_keyword_not_found(self, keyword):
         print("Keyword {} not found".format(keyword))
 
-    def print_ticket_invalid_id(self):
-        print("Invalid id : ticket not found")
+    def print_ticket_invalid_id(self, case_id):
+        print("Invalid id {}: ticket not found".format(case_id))
 
-    def print_updated_ticket(self, ticket):
-        print("Ticket updated: ", ticket)
+    def print_updated_ticket(self, case_id, new_assign, new_state):
+        print(
+            "Assign ticket {} to {} to state {}".format(case_id, new_assign, new_state)
+        )
 
     def print_form_update_ticket(self):
         id = input("Id: ")
@@ -87,11 +89,11 @@ class Interface(AbstractInterface):
     def print_invalid_type(self):
         print("Type is not PR or IR.")
 
-    def print_invalid_state(self):
-        print("State is not NEW, ANALYSIS, SOLVED, IN_DELIVERY or CLOSED.")
+    def print_invalid_state(self, new_state):
+        print("Invalid state {}".format(new_state))
 
-    def print_invalid_responsible(self):
-        print("Responsible is not L1, L2 or L3.")
+    def print_invalid_responsible(self, new_assign):
+        print("Invalid assign {}".format(new_assign))
 
     def print_id_already_exists(self):
         print("ID already exists")
