@@ -39,6 +39,10 @@ class Interface(AbstractInterface):
         assign_name = input("Assigned to: ")
         return id, state, assign_name
 
+    def print_one_form_ticket(self):
+        id = input("Id: ")
+        return id
+
     def print_main_form(self):
         print("\n1. Create a ticket")
         print("2. Update a ticket")
@@ -49,6 +53,9 @@ class Interface(AbstractInterface):
 
         val = input("\nEnter your selection: ")
         return val
+
+    def print_invalid_selection(self):
+        print("Invalid selection")
 
     def print_one_ticket(self, ticket: Ticket):
         print("Ticket ", "id : ", ticket.id)

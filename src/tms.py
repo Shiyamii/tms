@@ -119,20 +119,18 @@ def main():
 
             create_ticket(id, name, description, type, backlog)
         elif val == "2":  # Assign a ticket
-            id = input("Id: ")
-            state = input("State: ")
-            assign_name = input("Assigned to: ")
+            id, state, assign_name = interface.print_form_update_ticket()
             update_ticket(id, state, assign_name, backlog)
         elif val == "3":  # Close a ticket
-            id = input("Id: ")
+            id = interface.print_form_close_ticket()
             close_ticket(id, backlog, closed_backlog)
         elif val == "4":  # Search issues
-            keyword = input("Keyword: ")
+            keyword = interface.print_form_search_ticket()
             search_tickets(keyword, backlog)
         elif val == "5":  # Display issue
-            Id = input("Id: ")
-            print_one_ticket(Id, backlog)
+            id = interface.print_one_form_ticket()
+            print_one_ticket(id, backlog)
         elif val == "6":  # Sortie
             break
         else:
-            print("Invalid selection")
+            interface.print_invalid_selection()

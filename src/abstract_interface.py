@@ -41,8 +41,17 @@ class AbstractInterface(ABC):
         pass
 
     @abstractmethod
+    def print_one_form_ticket(self):
+        pass
+
+    @abstractmethod
     def print_main_form(self):
         pass
+
+    @abstractmethod
+    def print_invalid_selection(self):
+        pass
+
 
     @abstractmethod
     def print_invalid_id(self):
