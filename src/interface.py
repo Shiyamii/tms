@@ -59,7 +59,7 @@ class Interface(AbstractInterface):
         print("2. Update a ticket")
         print("3. Close a ticket")
         print("4. Search keyword")
-        print("5. Display issue from backlog")
+        print("5. Display issue")
         print("6. Sortie")
 
         val = input("\nEnter your selection: ")

@@ -65,7 +65,6 @@ class TMS:
         found = False
         self.interface.print_searched_keyword(keyword)
         tickets = self.data.search_tickets(keyword)
-        print(len(tickets))
         for ticket in tickets:
             self.interface.print_searched_ticket(ticket)
             found = True
@@ -108,8 +107,6 @@ class TMS:
                 id, name, description, ticket_type = (
                     self.interface.print_form_create_ticket()
                 )
-                # Detect problems in createIssue function and display error message to user
-
                 self.create_ticket(id, name, description, ticket_type)
             elif val == "2":  # Assign a ticket
                 id, state, assign_name = self.interface.print_form_update_ticket()
