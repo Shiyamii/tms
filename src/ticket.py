@@ -2,11 +2,14 @@ import datetime
 
 
 class Ticket:
-    def __init__(self, id, name, details, ticket_type, state, responsible):
+    def __init__(self, id, name, details, ticket_type, state, responsible, date=None):
         self.id = id
         self.name = name
         self.details = details
-        self.date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        if date:
+            self.date = date.strftime("%Y-%m-%d %H:%M:%S")
+        else:
+            self.date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         self.type = ticket_type
         self.state = state
         self.responsible = responsible
@@ -33,4 +36,4 @@ class Ticket:
         )
 
     def __str__(self):
-        return f"Ticket id: {self.id}, name: {self.name}, details: {self.details}, date: {self.date}, state: {self.state}, responsible: {self.responsible}"
+        return f"Ticket id: {self.id}, name: {self.name}, details: {self.details}, date: {self.date}, type: {self.type}, state: {self.state}, responsible: {self.responsible}"
