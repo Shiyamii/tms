@@ -20,8 +20,8 @@ class Interface(AbstractInterface):
         id = input("Id: ")
         name = input("Customer name: ")
         description = input("Case description: ")
-        type = input("Case type: ")
-        return id, name, description, type
+        ticket_type = input("Case type: ")
+        return id, name, description, ticket_type
 
     def print_searched_ticket(self, ticket):
         self.print_one_ticket(ticket)
@@ -68,7 +68,8 @@ class Interface(AbstractInterface):
     def print_invalid_selection(self):
         print("Invalid selection")
 
-    def print_one_ticket(self, ticket: Ticket):
+    @staticmethod
+    def print_one_ticket(ticket: Ticket):
         print("Ticket ", "id : ", ticket.id)
         print("Ticket ", "name : ", ticket.name)
         print("Ticket ", "details : ", ticket.details)
@@ -76,6 +77,7 @@ class Interface(AbstractInterface):
         print("Ticket ", "state : ", ticket.state)
         print("Ticket ", "responsible : ", ticket.responsible)
         print("")
+        pass
 
     def print_invalid_id(self):
         print("ID is not in format Case-XXX where X represents a digit.")

@@ -64,6 +64,7 @@ class TMS:
     def search_tickets(self, keyword):
         found = False
         self.interface.print_searched_keyword(keyword)
+
         for ticket in self.backlog:
             if (
                 keyword in ticket.id

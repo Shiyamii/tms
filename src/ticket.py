@@ -2,12 +2,12 @@ import datetime
 
 
 class Ticket:
-    def __init__(self, id, name, details, type, state, responsible):
+    def __init__(self, id, name, details, ticket_type, state, responsible):
         self.id = id
         self.name = name
         self.details = details
         self.date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        self.type = type
+        self.type = ticket_type
         self.state = state
         self.responsible = responsible
 
