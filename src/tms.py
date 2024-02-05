@@ -60,7 +60,7 @@ def print_one_ticket(case_id, case_list):
 # Get a keyword from user and search issues that contain that substring
 def search_tickets(keyword, case_list):
     found = False
-    print("Search keyword {}".format(keyword))
+    interface.print_searched_keyword(keyword)
     for ticket in case_list:
         if (
             keyword in ticket.id
@@ -70,11 +70,10 @@ def search_tickets(keyword, case_list):
             or keyword in ticket.state.value
             or keyword in ticket.responsible.value
         ):
-            print_one_ticket(ticket.id, case_list)
-            print("")
+            interface.print_searched_ticket(ticket)
             found = True
     if not found:
-        print("Keyword {} not found".format(keyword))
+        interface.print_keyword_not_found(keyword)
     return found
 
 

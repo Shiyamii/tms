@@ -30,6 +30,12 @@ class Interface(AbstractInterface):
         keyword = input("Keyword: ")
         return keyword
 
+    def print_searched_keyword(self, keyword):
+        print("Search keyword {}".format(keyword))
+
+    def print_keyword_not_found(self, keyword):
+        print("Keyword {} not found".format(keyword))
+
     def print_ticket_invalid_id(self):
         print("Invalid id : ticket not found")
 
@@ -67,6 +73,7 @@ class Interface(AbstractInterface):
         print("Ticket ", "date : ", ticket.date)
         print("Ticket ", "state : ", ticket.state)
         print("Ticket ", "responsible : ", ticket.responsible)
+        print("")
 
     def print_invalid_id(self):
         print("ID is not in format Case-XXX where X represents a digit.")

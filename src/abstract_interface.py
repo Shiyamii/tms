@@ -37,6 +37,14 @@ class AbstractInterface(ABC):
         pass
 
     @abstractmethod
+    def print_searched_keyword(self, keyword):
+        pass
+
+    @abstractmethod
+    def print_keyword_not_found(self, keyword):
+        pass
+
+    @abstractmethod
     def print_updated_ticket(self, ticket: Ticket):
         pass
 
