@@ -1,29 +1,30 @@
 import re
 
 from src.abstract_interface import AbstractInterface
+from src.abstract_data import AbstractData
 from src.ticket import Ticket
 from src.constants import State, Responsible, Type
 
 
 class TMS:
-    def __init__(self, abstract_interface: AbstractInterface):
-        self.backlog = []
-        self.closed_backlog = []
+    def __init__(
+        self, abstract_interface: AbstractInterface, abstract_data: AbstractData
+    ):
         self.interface = abstract_interface
+        self.data = abstract_data
 
     def close_ticket(self, case_id):
         self.interface.print_close_ticket(case_id)
-        for case in self.backlog:
-            if case.id == case_id:
-                if case.responsible != Responsible.L1:
-                    self.interface.print_l1_close_ticket()
-                    return False
-                case.state = State.CLOSED
-                self.backlog.remove(case)
-                self.closed_backlog.append(case)
-                return True
-        self.interface.print_ticket_invalid_id(case_id)
-        return False
+        ticket = self.data.get_ticket(case_id)
+        if ticket is None:
+            self.interface.print_ticket_invalid_id(case_id)
+            return False
+        if ticket.responsible != Responsible.L1:
+            self.interface.print_l1_close_ticket()
+            return False
+        ticket.state = State.CLOSED
+        self.data.close_ticket(ticket)
+        return True
 
     # Ticket creation with id,customer name and description
     def create_ticket(self, id, name, description, ticket_type):
@@ -40,42 +41,35 @@ class TMS:
         if ticket_type_enum is None:
             self.interface.print_invalid_type()
             return False
-        for ticket in self.backlog:
-            if ticket.id == id:
-                self.interface.print_id_already_exists()
-                return False
+        if self.data.id_exists(id):
+            self.interface.print_id_already_exists()
+            return False
         ticket = Ticket(
             id, name, description, ticket_type_enum, State.NEW, Responsible.L1
         )
         self.interface.print_created_ticket(ticket)
-        self.backlog.append(ticket)
+        self.data.create_ticket(ticket)
         return True
 
     # get an issue and print the details of it
     def print_one_ticket(self, case_id):
-        for ticket in self.backlog:
-            if ticket.id == case_id:
-                self.interface.print_searched_ticket(ticket)
-                return True
-        self.interface.print_ticket_invalid_id(case_id)
-        return False
+        ticket = self.data.get_ticket(case_id)
+        if ticket is None:
+            self.interface.print_ticket_invalid_id(case_id)
+            return False
+        self.interface.print_searched_ticket(ticket)
+        return True
 
     # Get a keyword from user and search issues that contain that substring
     def search_tickets(self, keyword):
         found = False
         self.interface.print_searched_keyword(keyword)
+        tickets = self.data.search_tickets(keyword)
+        print(len(tickets))
+        for ticket in tickets:
+            self.interface.print_searched_ticket(ticket)
+            found = True
 
-        for ticket in self.backlog:
-            if (
-                keyword in ticket.id
-                or keyword in ticket.name
-                or keyword in ticket.type.value
-                or keyword in ticket.details
-                or keyword in ticket.state.value
-                or keyword in ticket.responsible.value
-            ):
-                self.interface.print_searched_ticket(ticket)
-                found = True
         if not found:
             self.interface.print_keyword_not_found(keyword)
         return found
@@ -91,17 +85,18 @@ class TMS:
             self.interface.print_invalid_state(new_state)
             return False
         new_assign_enum = Responsible.get_enum(new_assign)
-        if new_state is None:
+        if new_assign_enum is None:
             self.interface.print_invalid_responsible(new_assign)
             return False
         self.interface.print_updated_ticket(case_id, new_assign, new_state)
-        for ticket in self.backlog:
-            if ticket.id == case_id:
-                ticket.state = new_state_enum
-                ticket.responsible = new_assign_enum
-                return True
-        self.interface.print_ticket_invalid_id(case_id)
-        return False
+        ticket = self.data.get_ticket(case_id)
+        if ticket is None:
+            self.interface.print_ticket_invalid_id(case_id)
+            return False
+        ticket.state = new_state_enum
+        ticket.responsible = new_assign_enum
+        self.data.update_ticket(ticket)
+        return True
 
     def main(self):
         # An infinite loop for menu that constantly asks user for their selection
