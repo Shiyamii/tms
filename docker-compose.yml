@@ -12,9 +12,11 @@ services:
       - POSTGRES_USER=user
       - POSTGRES_DB=db
   adminer:
-    image: adminer
+    image: adminer:latest
     restart: always
     depends_on:
-      - db
+      - postgres
+    environment:
+      - ADMINER_DEFAULT_SERVER=postgres
     ports:
       - "8080:8080"

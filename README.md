@@ -18,7 +18,7 @@ DB_HOST={{database_host}}
 Or just run docker-compose to setup the database
 
 ```
-docker-compose up -d
+docker compose up -d
 ```
 
 ## Database setup
