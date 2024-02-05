@@ -5,11 +5,15 @@ from src.ticket import Ticket
 
 class AbstractInterface(ABC):
     @abstractmethod
-    def print_closed_ticket(self, ticket: Ticket):
+    def print_close_ticket(self, case_id):
         pass
 
     @abstractmethod
     def print_form_close_ticket(self):
+        pass
+
+    @abstractmethod
+    def print_l1_close_ticket(self):
         pass
 
     @abstractmethod
@@ -51,7 +55,6 @@ class AbstractInterface(ABC):
     @abstractmethod
     def print_invalid_selection(self):
         pass
-
 
     @abstractmethod
     def print_invalid_id(self):

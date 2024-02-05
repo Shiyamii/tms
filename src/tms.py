@@ -8,17 +8,17 @@ interface = Interface()
 
 
 def close_ticket(case_id, case_list: list[Ticket], closed_list: list[Ticket]):
-    print("Close ticket {}".format(case_id))
+    interface.print_close_ticket(case_id)
     for case in case_list:
         if case.id == case_id:
             if case.responsible != Responsible.L1:
-                print("Only L1 can close the ticket")
+                interface.print_l1_close_ticket()
                 return False
             case.state = State.CLOSED
             case_list.remove(case)
             closed_list.append(case)
             return True
-    print("Invalid id : ticket not found")
+    interface.print_ticket_invalid_id()
     return False
 
 

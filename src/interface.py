@@ -3,12 +3,15 @@ from src.ticket import Ticket
 
 
 class Interface(AbstractInterface):
-    def print_closed_ticket(self, ticket):
-        print("Ticket closed: ", ticket)
+    def print_close_ticket(self, case_id):
+        print("Close ticket {}".format(case_id))
 
     def print_form_close_ticket(self):
         id = input("Id: ")
         return id
+
+    def print_l1_close_ticket(self):
+        print("Only L1 can close the ticket")
 
     def print_created_ticket(self, ticket):
         print("Ticket created: ", ticket.id)
