@@ -52,6 +52,7 @@ class Backlog(AbstractData):
     def close_ticket(self, ticket) -> bool:
         for i in range(len(self.tickets)):
             if self.tickets[i].id == ticket.id:
+                self.tickets[i].state = ticket.state
                 self.deleted_tickets.append(self.tickets.pop(i))
                 return True
         return False

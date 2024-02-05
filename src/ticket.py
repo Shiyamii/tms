@@ -31,3 +31,6 @@ class Ticket:
             or item == self.state
             or item == self.responsible
         )
+
+    def __str__(self):
+        return f"Ticket id: {self.id}, name: {self.name}, details: {self.details}, date: {self.date}, state: {self.state}, responsible: {self.responsible}"
