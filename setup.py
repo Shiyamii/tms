@@ -4,7 +4,7 @@ setup(
     name="tms",
     version="0.3",
     packages=find_packages(),
-    install_requires=["python-dotenv", "psycopg2"],
+    install_requires=["python-dotenv", "psycopg2", "PySimpleGUI"],
     tests_require=["coverage"],
     test_suite="test",
 )
