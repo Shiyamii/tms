@@ -111,6 +111,8 @@ class DB(AbstractData):
         return True
 
     def close_ticket(self, ticket) -> bool:
+        if not self.id_exists(ticket.id):
+            return False
         self.update_ticket(ticket)
         query = """
             DELETE FROM backlog WHERE ticket_id = %s
