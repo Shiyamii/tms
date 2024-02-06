@@ -18,6 +18,7 @@ class DatabaseConnect:
                 host=os.getenv("DATABASE_HOST"),
                 port=os.getenv("DATABASE_PORT"),
             )
+            self.connection.autocommit = True
         except Exception as e:
             print(f"Error: {e}")
 

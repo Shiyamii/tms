@@ -3,6 +3,7 @@ version: '3.9'
 services:
   postgres:
     image: postgres:latest
+    restart: always
     ports:
       - "5432:5432"
     volumes:
@@ -19,4 +20,4 @@ services:
     environment:
       - ADMINER_DEFAULT_SERVER=postgres
     ports:
-      - "8080:8080"
+      - "9999:8080"

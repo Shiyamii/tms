@@ -10,6 +10,8 @@ class DB(AbstractData):
     def __init__(self):
         self.database_connection = DatabaseConnect()
         self.database_connection.connect()
+        print(self.get_ticket("Case-011"))
+        print(self.get_ticket("1"))
 
     @staticmethod
     def data_to_ticket(data):
@@ -53,7 +55,17 @@ class DB(AbstractData):
         return result
 
     def get_ticket(self, ticket_id) -> Optional[Ticket]:
-        pass
+        query = """
+            SELECT t.id,t.name,t.description,t.ticket_type,t.state,t.responsible,b.date_created 
+            FROM backlog b, ticket t 
+            WHERE b.ticket_id = t.id 
+            AND t.id = %s
+        """
+        data = (ticket_id,)
+        result = self.database_connection.fetchone(query, data)
+        if result:
+            return self.data_to_ticket(result)
+        return None
 
     def id_exists(self, ticket_id) -> bool:
         pass
