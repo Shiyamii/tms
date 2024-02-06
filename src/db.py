@@ -10,6 +10,21 @@ class DB(AbstractData):
     def __init__(self):
         self.database_connection = DatabaseConnect()
         self.database_connection.connect()
+        self.create_ticket(
+            Ticket(
+                "Case-001",
+                "Case 011",
+                "Case 011 details",
+                Type.PR,
+                State.NEW,
+                Responsible.L1,
+            )
+        )
+        ticket = self.get_ticket("Case-011")
+        print(ticket)
+        ticket.state = State.ANALYSIS
+        ticket.responsible = Responsible.L2
+        self.update_ticket(ticket)
 
     @staticmethod
     def data_to_ticket(data):
@@ -74,7 +89,7 @@ class DB(AbstractData):
     def create_ticket(self, ticket):
         query = """
             INSERT INTO ticket (id, name, description, ticket_type, state, responsible)
-            VALUES (%s, %s, %s, %s, %s, %s)
+            VALUES (%s, %s, %s, %s, %s, %s);
         """
         data = (
             ticket.id,
@@ -86,8 +101,28 @@ class DB(AbstractData):
         )
         self.database_connection.execute(query, data)
 
+        query = """
+            INSERT INTO backlog (date_created, ticket_id)
+            VALUES (NOW(), %s);
+        """
+        data = (ticket.id,)
+        self.database_connection.execute(query, data)
+
     def update_ticket(self, ticket):
-        pass
+        query = """
+            UPDATE ticket 
+            SET name = %s, description = %s, ticket_type = %s, state = %s, responsible = %s
+            WHERE id = %s
+        """
+        data = (
+            ticket.name,
+            ticket.details,
+            ticket.type.value,
+            ticket.state.value,
+            ticket.responsible.value,
+            ticket.id,
+        )
+        self.database_connection.execute(query, data)
 
     def close_ticket(self, ticket) -> bool:
         pass
