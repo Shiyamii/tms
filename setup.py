@@ -5,5 +5,6 @@ setup(
     version="0.3",
     packages=find_packages(),
     install_requires=["python-dotenv", "psycopg2"],
+    tests_require=["coverage"],
     test_suite="test",
 )

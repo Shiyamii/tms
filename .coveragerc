@@ -1,0 +1,25 @@
+[report]
+exclude_also =
+    from *
+    import *
+    def __repr__
+    def __str__
+    def __eq__
+    if self.debug:
+    if settings.DEBUG
+    raise AssertionError
+    raise NotImplementedError
+    if 0:
+    if __name__ == .__main__.:
+    if TYPE_CHECKING:
+    class .*\bProtocol\):
+    ## unittest
+    class .*\bTestCase\):
+    def setUp
+    def tearDown
+    def test_.*
+    def suite\(\):
+    ## abc
+    @(abc\.)?abstractmethod
+    @(abc\.)?abstractproperty
+    @(abc\.)?abstractmethod
