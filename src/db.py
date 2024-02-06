@@ -10,25 +10,9 @@ class DB(AbstractData):
     def __init__(self):
         self.database_connection = DatabaseConnect()
         self.database_connection.connect()
-        self.create_ticket(
-            Ticket(
-                "Case-001",
-                "Case 011",
-                "Case 011 details",
-                Type.PR,
-                State.NEW,
-                Responsible.L1,
-            )
-        )
-        ticket = self.get_ticket("Case-011")
-        print(ticket)
-        ticket.state = State.ANALYSIS
-        ticket.responsible = Responsible.L2
-        self.update_ticket(ticket)
 
     @staticmethod
     def data_to_ticket(data):
-        print(data)
         return Ticket(
             data[0],
             data[1],
@@ -40,7 +24,6 @@ class DB(AbstractData):
         )
 
     def data_to_tickets(self, data):
-        print(data)
         return [self.data_to_ticket(ticket) for ticket in data]
 
     def search_tickets(self, keyword):
@@ -109,6 +92,8 @@ class DB(AbstractData):
         self.database_connection.execute(query, data)
 
     def update_ticket(self, ticket):
+        if not self.id_exists(ticket.id):
+            return False
         query = """
             UPDATE ticket 
             SET name = %s, description = %s, ticket_type = %s, state = %s, responsible = %s
@@ -123,6 +108,18 @@ class DB(AbstractData):
             ticket.id,
         )
         self.database_connection.execute(query, data)
+        return True
 
     def close_ticket(self, ticket) -> bool:
-        pass
+        self.update_ticket(ticket)
+        query = """
+            DELETE FROM backlog WHERE ticket_id = %s
+        """
+        data = (ticket.id,)
+        self.database_connection.execute(query, data)
+        query = """
+            INSERT INTO deleted_backlog (date_created, ticket_id)
+            VALUES (NOW(), %s);
+        """
+        self.database_connection.execute(query, data)
+        return True
