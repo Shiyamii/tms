@@ -10,8 +10,6 @@ class DB(AbstractData):
     def __init__(self):
         self.database_connection = DatabaseConnect()
         self.database_connection.connect()
-        print(self.get_ticket("Case-011"))
-        print(self.get_ticket("1"))
 
     @staticmethod
     def data_to_ticket(data):
@@ -68,7 +66,10 @@ class DB(AbstractData):
         return None
 
     def id_exists(self, ticket_id) -> bool:
-        pass
+        query = "SELECT * FROM ticket WHERE id = %s"
+        data = (ticket_id,)
+        result = self.database_connection.fetchone(query, data)
+        return result is not None
 
     def create_ticket(self, ticket):
         query = """
