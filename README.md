@@ -27,7 +27,7 @@ docker compose up -d
 Setup the database by running the following command in the root directory of the project
 
 ```
-python database/setup_database.py
+python setup_database.py
 ```
 
 ## Run the project
