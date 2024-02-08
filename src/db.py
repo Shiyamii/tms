@@ -36,8 +36,7 @@ class DB(AbstractData):
             OR t.description LIKE %s
             OR t.ticket_type LIKE %s
             OR t.state LIKE %s
-            OR t.responsible LIKE %s
-            OR t.date_created LIKE %s)
+            OR t.responsible LIKE %s)
         """
         data = (
             State.CLOSED.value,

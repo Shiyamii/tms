@@ -117,7 +117,8 @@ class TMS:
                 self.close_ticket(id)
             elif val == "4":  # Search issues
                 keyword = self.interface.print_form_search_ticket()
-                self.search_tickets(keyword)
+                if keyword is not None:
+                    self.search_tickets(keyword)
             elif val == "5":  # Display issue
                 id = self.interface.print_one_form_ticket()
                 if id is not None:

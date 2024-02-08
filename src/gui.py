@@ -112,13 +112,37 @@ class GUI(AbstractInterface):
         pass
 
     def print_form_search_ticket(self):
-        pass
+        layout = [
+            [sg.Text("Ticket Management System", size=(30, 1), font=("Helvetica", 25))],
+            [sg.Text("Search issue", size=(20, 1), font=("Helvetica", 20))],
+            [sg.Text("Keyword"), sg.Input(key="keyword")],
+            [
+                sg.Button("Search ticket", key="Search ticket"),
+                sg.Button("Cancel", key="cancel"),
+            ],
+        ]
+        self.window = sg.Window("Ticket Management System", layout)
+        keyword = None
+        running = True
+        while running:
+            event, values = self.window.read()
+            if event in (sg.WIN_CLOSED, "cancel"):
+                running = False
+            elif event == "Search ticket":
+                keyword = values["keyword"]
+                if keyword == "":
+                    keyword = None
+                    sg.popup("Please enter a keyword")
+                else:
+                    running = False
+        self.window.close()
+        return keyword
 
     def print_searched_keyword(self, keyword):
-        pass
+        sg.popup("Search keyword {}".format(keyword))
 
     def print_keyword_not_found(self, keyword):
-        pass
+        sg.popup("Keyword {} not found".format(keyword))
 
     def print_updated_ticket(self, case_id, new_assign, new_state):
         sg.popup(
