@@ -110,7 +110,8 @@ class TMS:
                 self.create_ticket(id, name, description, ticket_type)
             elif val == "2":  # Assign a ticket
                 id, state, assign_name = self.interface.print_form_update_ticket()
-                self.update_ticket(id, state, assign_name)
+                if id is not None:
+                    self.update_ticket(id, state, assign_name)
             elif val == "3":  # Close a ticket
                 id = self.interface.print_form_close_ticket()
                 self.close_ticket(id)

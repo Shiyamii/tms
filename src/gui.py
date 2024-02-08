@@ -1,7 +1,7 @@
 from src.abstract_interface import AbstractInterface
 import PySimpleGUI as sg
 
-from src.constants import Type
+from src.constants import Type, State, Responsible
 from src.ticket import Ticket
 
 
@@ -121,10 +121,61 @@ class GUI(AbstractInterface):
         pass
 
     def print_updated_ticket(self, case_id, new_assign, new_state):
-        pass
+        sg.popup(
+            "Assign ticket {} to {} to state {}".format(case_id, new_assign, new_state)
+        )
 
     def print_form_update_ticket(self):
-        pass
+        layout = [
+            [sg.Text("Ticket Management System", size=(30, 1), font=("Helvetica", 25))],
+            [sg.Text("Update ticket", size=(20, 1), font=("Helvetica", 20))],
+            [sg.Text("Ticket-ID"), sg.Input(key="case_id")],
+            [sg.Text("State")],
+            [
+                sg.Radio("Analysis", "state", key="analysis", default=True),
+                sg.Radio("Solved", "state", key="solved"),
+                sg.Radio("In delivery", "state", key="in delivery"),
+            ],
+            [sg.Text("Assigned to")],
+            [
+                sg.Radio("L1", "assign", key="L1", default=True),
+                sg.Radio("L2", "assign", key="L2"),
+                sg.Radio("L3", "assign", key="L3"),
+            ],
+            [
+                sg.Button("Update ticket", key="Update ticket"),
+                sg.Button("Cancel", key="cancel"),
+            ],
+        ]
+        self.window = sg.Window("Ticket Management System", layout)
+        case_id = None
+        state = None
+        assign_name = None
+        running = True
+        while running:
+            event, values = self.window.read()
+            if event in (sg.WIN_CLOSED, "cancel"):
+                running = False
+            elif event == "Update ticket":
+                if values["case_id"] == "":
+                    sg.popup("Please fill all fields")
+                else:
+                    running = False
+                    case_id = values["case_id"]
+                    if values["analysis"]:
+                        state = State.ANALYSIS.value
+                    elif values["solved"]:
+                        state = State.SOLVED.value
+                    elif values["in delivery"]:
+                        state = State.IN_DELIVERY.value
+                    if values["L1"]:
+                        assign_name = Responsible.L1.value
+                    elif values["L2"]:
+                        assign_name = Responsible.L2.value
+                    elif values["L3"]:
+                        assign_name = Responsible.L3.value
+        self.window.close()
+        return case_id, state, assign_name
 
     def print_one_form_ticket(self):
         layout = [
