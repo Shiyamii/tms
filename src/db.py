@@ -28,17 +28,19 @@ class DB(AbstractData):
 
     def search_tickets(self, keyword):
         query = """
-            SELECT t.id,t.name,t.description,t.ticket_type,t.state,t.responsible,b.date_created 
-            FROM backlog b, ticket t 
-            WHERE b.ticket_id = t.id 
-            AND (t.id LIKE %s 
-            OR t.name LIKE %s 
+            SELECT t.id,t.name,t.description,t.ticket_type,t.state,t.responsible,t.date_created 
+            FROM ticket t 
+            WHERE t.state != %s 
+            AND(t.id LIKE %s  
+            OR t.name LIKE %s
             OR t.description LIKE %s
             OR t.ticket_type LIKE %s
             OR t.state LIKE %s
-            OR t.responsible LIKE %s)
+            OR t.responsible LIKE %s
+            OR t.date_created LIKE %s)
         """
         data = (
+            State.CLOSED.value,
             f"%{keyword}%",
             f"%{keyword}%",
             f"%{keyword}%",
@@ -52,20 +54,19 @@ class DB(AbstractData):
 
     def get_ticket(self, ticket_id) -> Optional[Ticket]:
         query = """
-            SELECT t.id,t.name,t.description,t.ticket_type,t.state,t.responsible,b.date_created 
-            FROM backlog b, ticket t 
-            WHERE b.ticket_id = t.id 
-            AND t.id = %s
+            SELECT t.id,t.name,t.description,t.ticket_type,t.state,t.responsible,t.date_created 
+            FROM  ticket t 
+            WHERE t.id = %s AND t.state != %s 
         """
-        data = (ticket_id,)
+        data = (ticket_id, State.CLOSED.value)
         result = self.database_connection.fetchone(query, data)
         if result:
             return self.data_to_ticket(result)
         return None
 
     def id_exists(self, ticket_id) -> bool:
-        query = "SELECT * FROM ticket WHERE id = %s"
-        data = (ticket_id,)
+        query = "SELECT * FROM ticket WHERE id = %s AND state != %s"
+        data = (ticket_id, State.CLOSED.value)
         result = self.database_connection.fetchone(query, data)
         return result is not None
 
@@ -82,13 +83,6 @@ class DB(AbstractData):
             ticket.state.value,
             ticket.responsible.value,
         )
-        self.database_connection.execute(query, data)
-
-        query = """
-            INSERT INTO backlog (date_created, ticket_id)
-            VALUES (NOW(), %s);
-        """
-        data = (ticket.id,)
         self.database_connection.execute(query, data)
 
     def update_ticket(self, ticket):
@@ -113,15 +107,12 @@ class DB(AbstractData):
     def close_ticket(self, ticket) -> bool:
         if not self.id_exists(ticket.id):
             return False
-        self.update_ticket(ticket)
         query = """
-            DELETE FROM backlog WHERE ticket_id = %s
+            UPDATE ticket 
+            SET state = %s
+            WHERE id = %s
         """
-        data = (ticket.id,)
+        data = (State.CLOSED.value, ticket.id)
         self.database_connection.execute(query, data)
-        query = """
-            INSERT INTO deleted_backlog (date_created, ticket_id)
-            VALUES (NOW(), %s);
-        """
-        self.database_connection.execute(query, data)
+
         return True

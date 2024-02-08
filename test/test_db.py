@@ -70,17 +70,19 @@ class DBTest(unittest.TestCase):
         self.db.database_connection = self.database_connection_mock
         result = self.db.search_tickets("keyword_test")
         query = """
-            SELECT t.id,t.name,t.description,t.ticket_type,t.state,t.responsible,b.date_created 
-            FROM backlog b, ticket t 
-            WHERE b.ticket_id = t.id 
-            AND (t.id LIKE %s 
-            OR t.name LIKE %s 
+            SELECT t.id,t.name,t.description,t.ticket_type,t.state,t.responsible,t.date_created 
+            FROM ticket t 
+            WHERE t.state != %s 
+            AND(t.id LIKE %s  
+            OR t.name LIKE %s
             OR t.description LIKE %s
             OR t.ticket_type LIKE %s
             OR t.state LIKE %s
-            OR t.responsible LIKE %s)
+            OR t.responsible LIKE %s
+            OR t.date_created LIKE %s)
         """
         data = (
+            State.CLOSED.value,
             "%keyword_test%",
             "%keyword_test%",
             "%keyword_test%",
@@ -94,12 +96,11 @@ class DBTest(unittest.TestCase):
     def test_get_ticket(self):
         self.database_connection_mock.fetchone.return_value = self.data
         query = """
-            SELECT t.id,t.name,t.description,t.ticket_type,t.state,t.responsible,b.date_created 
-            FROM backlog b, ticket t 
-            WHERE b.ticket_id = t.id 
-            AND t.id = %s
+            SELECT t.id,t.name,t.description,t.ticket_type,t.state,t.responsible,t.date_created 
+            FROM  ticket t 
+            WHERE t.id = %s AND t.state != %s 
         """
-        data = ("Case-011",)
+        data = ("Case-011", State.CLOSED.value)
         result = self.db.get_ticket("Case-011")
         self.database_connection_mock.fetchone.assert_called_once_with(query, data)
         self.assertEqual(result.id, "Case-011")
@@ -107,39 +108,38 @@ class DBTest(unittest.TestCase):
     def test_get_ticket_not_found(self):
         self.database_connection_mock.fetchone.return_value = None
         query = """
-            SELECT t.id,t.name,t.description,t.ticket_type,t.state,t.responsible,b.date_created 
-            FROM backlog b, ticket t 
-            WHERE b.ticket_id = t.id 
-            AND t.id = %s
+            SELECT t.id,t.name,t.description,t.ticket_type,t.state,t.responsible,t.date_created 
+            FROM  ticket t 
+            WHERE t.id = %s AND t.state != %s 
         """
-        data = ("Case-011",)
+        data = ("Case-011", State.CLOSED.value)
         result = self.db.get_ticket("Case-011")
         self.database_connection_mock.fetchone.assert_called_once_with(query, data)
         self.assertIsNone(result)
 
     def test_id_exists(self):
         self.database_connection_mock.fetchone.return_value = self.data
-        query = "SELECT * FROM ticket WHERE id = %s"
-        data = ("Case-011",)
+        query = "SELECT * FROM ticket WHERE id = %s AND state != %s"
+        data = ("Case-011", State.CLOSED.value)
         result = self.db.id_exists("Case-011")
         self.database_connection_mock.fetchone.assert_called_once_with(query, data)
         self.assertTrue(result)
 
     def test_id_not_exists(self):
         self.database_connection_mock.fetchone.return_value = None
-        query = "SELECT * FROM ticket WHERE id = %s"
-        data = ("Case-011",)
+        query = "SELECT * FROM ticket WHERE id = %s AND state != %s"
+        data = ("Case-011", State.CLOSED.value)
         result = self.db.id_exists("Case-011")
         self.database_connection_mock.fetchone.assert_called_once_with(query, data)
         self.assertFalse(result)
 
     def test_create_ticket(self):
         self.db.create_ticket(self.ticket)
-        query1 = """
+        query = """
             INSERT INTO ticket (id, name, description, ticket_type, state, responsible)
             VALUES (%s, %s, %s, %s, %s, %s);
         """
-        data1 = (
+        data = (
             "Case-011",
             "name",
             "details",
@@ -147,13 +147,7 @@ class DBTest(unittest.TestCase):
             State.ANALYSIS.value,
             Responsible.L2.value,
         )
-        query2 = """
-            INSERT INTO backlog (date_created, ticket_id)
-            VALUES (NOW(), %s);
-        """
-        data2 = ("Case-011",)
-        calls = [call(query1, data1), call(query2, data2)]
-        self.database_connection_mock.execute.assert_has_calls(calls)
+        self.database_connection_mock.execute.assert_called_once_with(query, data)
 
     def test_update_ticket(self):
         self.database_connection_mock.fetchone.return_value = self.data
@@ -183,32 +177,19 @@ class DBTest(unittest.TestCase):
     def test_close_ticket(self):
         self.database_connection_mock.fetchone.return_value = self.data
         self.db.database_connection = self.database_connection_mock
-        result = self.db.close_ticket(self.ticket)
-        self.assertTrue(result)
-        query1 = """
+        self.ticket.state = State.CLOSED
+        query = """
             UPDATE ticket 
-            SET name = %s, description = %s, ticket_type = %s, state = %s, responsible = %s
+            SET state = %s
             WHERE id = %s
         """
-        data1 = (
-            "name",
-            "details",
-            Type.PR.value,
-            State.ANALYSIS.value,
-            Responsible.L2.value,
+        data = (
+            State.CLOSED.value,
             "Case-011",
         )
-        query2 = """
-            DELETE FROM backlog WHERE ticket_id = %s
-        """
-        data2 = ("Case-011",)
-        query3 = """
-            INSERT INTO deleted_backlog (date_created, ticket_id)
-            VALUES (NOW(), %s);
-        """
-        calls = [call(query1, data1), call(query2, data2), call(query3, data2)]
-
-        self.database_connection_mock.execute.assert_has_calls(calls)
+        result = self.db.close_ticket(self.ticket)
+        self.assertTrue(result)
+        self.database_connection_mock.execute.assert_called_once_with(query, data)
 
     def test_close_ticket_not_found(self):
         self.database_connection_mock.fetchone.return_value = None
