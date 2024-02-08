@@ -107,14 +107,16 @@ class TMS:
                 id, name, description, ticket_type = (
                     self.interface.print_form_create_ticket()
                 )
-                self.create_ticket(id, name, description, ticket_type)
+                if id is not None:
+                    self.create_ticket(id, name, description, ticket_type)
             elif val == "2":  # Assign a ticket
                 id, state, assign_name = self.interface.print_form_update_ticket()
                 if id is not None:
                     self.update_ticket(id, state, assign_name)
             elif val == "3":  # Close a ticket
                 id = self.interface.print_form_close_ticket()
-                self.close_ticket(id)
+                if id is not None:
+                    self.close_ticket(id)
             elif val == "4":  # Search issues
                 keyword = self.interface.print_form_search_ticket()
                 if keyword is not None:

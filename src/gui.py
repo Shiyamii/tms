@@ -13,7 +13,8 @@ class GUI(AbstractInterface):
     @staticmethod
     def get_default_layout():
         return [
-            [sg.Text("Ticket Management System")],
+            [sg.Text("Ticket Management System", size=(30, 1), font=("Helvetica", 25))],
+            [sg.Text("Choose an action", size=(20, 1), font=("Helvetica", 20))],
             [sg.Button("Create a ticket", key="create_ticket")],
             [sg.Button("Update a ticket", key="update_ticket")],
             [sg.Button("Close a ticket", key="close_ticket")],
@@ -23,11 +24,12 @@ class GUI(AbstractInterface):
         ]
 
     def print_close_ticket(self, case_id):
-        pass
+        sg.popup("Close ticket {}".format(case_id))
 
     def print_form_close_ticket(self):
         layout = [
-            [sg.Text("Ticket Management System")],
+            [sg.Text("Ticket Management System", size=(30, 1), font=("Helvetica", 25))],
+            [sg.Text("Close new ticket", size=(20, 1), font=("Helvetica", 20))],
             [sg.Text("Ticket-ID"), sg.Input(key="case_id")],
             [
                 sg.Button("Close ticket", key="Close ticket"),
@@ -52,7 +54,7 @@ class GUI(AbstractInterface):
         return value
 
     def print_l1_close_ticket(self):
-        pass
+        sg.popup("Only L1 can close the ticket")
 
     def print_created_ticket(self, ticket: Ticket):
         sg.popup("Ticket created: ", ticket.id)
@@ -109,7 +111,7 @@ class GUI(AbstractInterface):
         self.print_one_ticket(ticket)
 
     def print_ticket_invalid_id(self, case_id):
-        pass
+        sg.popup("Invalid id {}: ticket not found".format(case_id))
 
     def print_form_search_ticket(self):
         layout = [
