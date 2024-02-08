@@ -10,8 +10,8 @@ from src.ticket import Ticket
 
 class DBTest(unittest.TestCase):
     def setUp(self):
-        self.db = DB()
         self.database_connection_mock = MagicMock(spec=DatabaseConnect)
+        self.db = DB(self.database_connection_mock)
         self.data = (
             "Case-011",
             "name",

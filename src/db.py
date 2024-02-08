@@ -7,8 +7,8 @@ from typing import Optional
 
 
 class DB(AbstractData):
-    def __init__(self):
-        self.database_connection = DatabaseConnect()
+    def __init__(self, database_connection: DatabaseConnect):
+        self.database_connection = database_connection
         self.database_connection.connect()
 
     @staticmethod
