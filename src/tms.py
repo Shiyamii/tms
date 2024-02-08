@@ -119,7 +119,8 @@ class TMS:
                 self.search_tickets(keyword)
             elif val == "5":  # Display issue
                 id = self.interface.print_one_form_ticket()
-                self.print_one_ticket(id)
+                if id is not None:
+                    self.print_one_ticket(id)
             elif val == "6":  # Sortie
                 break
             else:
