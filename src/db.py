@@ -1,5 +1,5 @@
 from src.abstract_data import AbstractData
-from database.database_connect import DatabaseConnect
+from src.database.database_connect import DatabaseConnect
 from src.ticket import Ticket
 from src.constants import State, Responsible, Type
 

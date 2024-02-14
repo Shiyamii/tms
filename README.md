@@ -2,14 +2,14 @@
 
 ## Ticket Management Service
 
-### Version :  ``3``
+### Version :  ``4``
 
 ## Setup env
 
 Replace the following values with your needs:
 
 ```properties
-DATA={{data_type}} 
+DATA={{data_type}}
 INTERFACE={{interface_type}}
 ```
 

@@ -2,7 +2,7 @@ import os
 
 from dotenv import load_dotenv
 
-from database.database_connect import DatabaseConnect
+from src.database.database_connect import DatabaseConnect
 
 create_table_ticket = """
     CREATE TABLE IF NOT EXISTS ticket (

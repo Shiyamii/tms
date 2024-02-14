@@ -1,8 +1,8 @@
 import datetime
 import unittest
-from unittest.mock import MagicMock, call
+from unittest.mock import MagicMock
 
-from database.database_connect import DatabaseConnect
+from src.database.database_connect import DatabaseConnect
 from src.db import DB
 from src.constants import State, Responsible, Type
 from src.ticket import Ticket

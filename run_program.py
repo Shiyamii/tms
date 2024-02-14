@@ -1,6 +1,6 @@
 # load and run tms.py
 import os
-from database.database_connect import DatabaseConnect
+from src.database.database_connect import DatabaseConnect
 from src.backlog import Backlog
 from src.gui import GUI
 from src.interface import Interface
