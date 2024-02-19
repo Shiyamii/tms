@@ -185,12 +185,59 @@ class SearchTicketTest(unittest.TestCase):
         self.interface_mock.print_searched_ticket.assert_called_once_with(self.ticket)
 
 
+class PrintOneTicketTest(unittest.TestCase):
+    def setUp(self):
+        self.interface_mock = MagicMock(spec=Interface)
+        self.backlog_mock = MagicMock(spec=Backlog)
+        self.tms = TMS(self.interface_mock, self.backlog_mock)
+        self.ticket = Ticket(
+            "Case-001",
+            "IUT",
+            "IUT is not working",
+            Type.PR,
+            State.NEW,
+            Responsible.L1,
+        )
+        self.backlog_mock.get_ticket.return_value = self.ticket
+
+    def test_print_one_ticket(self):
+        self.backlog_mock.get_ticket.return_value = self.ticket
+        self.tms.print_one_ticket(self.ticket.id)
+        self.interface_mock.print_searched_ticket.assert_called_once_with(self.ticket)
+
+    def test_print_one_ticket_invalid_id(self):
+        self.backlog_mock.get_ticket.return_value = None
+        self.tms.print_one_ticket("Case-002")
+        self.interface_mock.print_ticket_invalid_id.assert_called_once_with("Case-002")
+
+
+class MainTest(unittest.TestCase):
+    def setUp(self):
+        self.interface_mock = MagicMock(spec=Interface)
+        self.backlog_mock = MagicMock(spec=Backlog)
+        self.tms = TMS(self.interface_mock, self.backlog_mock)
+        self.ticket = Ticket(
+            "Case-001",
+            "IUT",
+            "IUT is not working",
+            Type.PR,
+            State.NEW,
+            Responsible.L1,
+        )
+        self.backlog_mock.get_ticket.return_value = self.ticket
+
+    def test_main(self):
+        self.interface_mock.print_main_form.return_value = "6"
+        self.tms.main()
+
+
 def suite():
     suite = unittest.TestSuite()
     suite.addTest(CreateTicketTest("test_create_ticket"))
     suite.addTest(UpdateTicketTest("test_update_ticket"))
     suite.addTest(CloseTicketTest("test_close_ticket"))
     suite.addTest(SearchTicketTest("test_search_ticket"))
+    suite.addTest(PrintOneTicketTest("test_print_one_ticket"))
     return suite
 
 
