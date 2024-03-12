@@ -1,3 +1,4 @@
+import datetime
 import unittest
 from src.backlog import Backlog
 from src.ticket import Ticket
@@ -102,6 +103,41 @@ class BacklogTest(unittest.TestCase):
         )
         success = self.backlog.close_ticket(ticket)
         self.assertFalse(success)
+
+    def test_get_old_new_ticket(self):
+        current_datetime = datetime.datetime.now()
+        three_days_ago = current_datetime - datetime.timedelta(days=4)
+        formatted_result = three_days_ago.strftime("%Y-%m-%d %H:%M:%S")
+        self.backlog.tickets = self.tickets
+        self.tickets[0].date = formatted_result
+        self.tickets[1].state = State.ANALYSIS
+        self.tickets[1].date = formatted_result
+        tickets = self.backlog.get_old_new_ticket()
+        self.assertEqual(tickets, [self.tickets[0]])
+        self.tickets[1].date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        self.assertEqual(tickets, [self.tickets[0]])
+
+    def test_get_old_assigned_ticket(self):
+        current_datetime = datetime.datetime.now()
+        ten_days_ago = current_datetime - datetime.timedelta(days=11)
+        formatted_result = ten_days_ago.strftime("%Y-%m-%d %H:%M:%S")
+        self.backlog.tickets = self.tickets
+        self.tickets[0].date = formatted_result
+        self.tickets[0].state = State.ASSIGNED
+        self.tickets[1].date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        self.tickets[1].state = State.ASSIGNED
+        tickets = self.backlog.get_old_assigned_ticket()
+        self.assertEqual(tickets, [self.tickets[0]])
+
+    def get_old_ticket_list(self):
+        current_datetime = datetime.datetime.now()
+        twenty_days_ago = current_datetime - datetime.timedelta(days=21)
+        formatted_result = twenty_days_ago.strftime("%Y-%m-%d %H:%M:%S")
+        self.backlog.tickets = self.tickets
+        self.tickets[0].date = formatted_result
+        self.tickets[1].date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        tickets = self.backlog.get_old_ticket_list()
+        self.assertEqual(tickets, [self.tickets[0]])
 
 
 if __name__ == "__main__":

@@ -131,7 +131,7 @@ class DB(AbstractData):
         query = """
             SELECT t.id,t.name,t.description,t.ticket_type,t.state,t.responsible,t.date_created 
             FROM ticket t 
-            WHERE t.state = %s  AND t.date_created < NOW() - '10 days'::interval
+            WHERE t.state = %s AND t.date_created < NOW() - '10 days'::interval
         """
         data = (State.ASSIGNED.value,)
         result = self.database_connection.fetch(query, data)

@@ -196,6 +196,41 @@ class DBTest(unittest.TestCase):
         result = self.db.close_ticket(self.ticket)
         self.assertFalse(result)
 
+    def test_get_old_new_ticket(self):
+        self.database_connection_mock.fetch.return_value = [self.data]
+        result = self.db.get_old_new_ticket()
+        query = """
+            SELECT t.id,t.name,t.description,t.ticket_type,t.state,t.responsible,t.date_created 
+            FROM ticket t 
+            WHERE t.state = %s AND t.date_created < NOW() - '3 days'::interval
+        """
+        data = (State.NEW.value,)
+        self.database_connection_mock.fetch.assert_called_once_with(query, data)
+        self.assertEqual(len(result), 1)
+
+    def test_get_old_assigned_ticket(self):
+        self.database_connection_mock.fetch.return_value = [self.data]
+        result = self.db.get_old_assigned_ticket()
+        query = """
+            SELECT t.id,t.name,t.description,t.ticket_type,t.state,t.responsible,t.date_created 
+            FROM ticket t 
+            WHERE t.state = %s AND t.date_created < NOW() - '10 days'::interval
+        """
+        data = (State.ASSIGNED.value,)
+        self.database_connection_mock.fetch.assert_called_once_with(query, data)
+        self.assertEqual(len(result), 1)
+
+    def test_get_old_ticket_list(self):
+        self.database_connection_mock.fetch.return_value = [self.data]
+        result = self.db.get_old_ticket_list()
+        query = """
+            SELECT t.id,t.name,t.description,t.ticket_type,t.state,t.responsible,t.date_created 
+            FROM ticket t 
+            WHERE t.date_created < NOW() - '20 days'::interval
+        """
+        self.database_connection_mock.fetch.assert_called_once_with(query)
+        self.assertEqual(len(result), 1)
+
 
 if __name__ == "__main__":
     unittest.main()
