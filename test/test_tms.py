@@ -182,7 +182,9 @@ class SearchTicketTest(unittest.TestCase):
         self.interface_mock.print_searched_keyword.assert_called_once_with(
             Type.PR.value
         )
-        self.interface_mock.print_searched_ticket.assert_called_once_with(self.ticket)
+        self.interface_mock.print_search.assert_called_once_with(
+            Type.PR.value, [self.ticket]
+        )
 
 
 class PrintOneTicketTest(unittest.TestCase):
@@ -227,8 +229,39 @@ class MainTest(unittest.TestCase):
         self.backlog_mock.get_ticket.return_value = self.ticket
 
     def test_main(self):
-        self.interface_mock.print_main_form.return_value = "6"
+        self.interface_mock.print_main_form.return_value = "7"
         self.tms.main()
+
+
+class tar3Test(unittest.TestCase):
+    def setUp(self):
+        self.interface_mock = MagicMock(spec=Interface)
+        self.backlog_mock = MagicMock(spec=Backlog)
+        self.tms = TMS(self.interface_mock, self.backlog_mock)
+        self.ticket = Ticket(
+            "Case-001",
+            "IUT",
+            "IUT is not working",
+            Type.PR,
+            State.NEW,
+            Responsible.L1,
+        )
+        self.backlog_mock.get_ticket.return_value = self.ticket
+
+    def test_get_tar_3(self):
+        self.backlog_mock.get_old_new_ticket.return_value = [self.ticket]
+        self.backlog_mock.get_old_assigned_ticket.return_value = [self.ticket]
+        self.backlog_mock.get_old_ticket_list.return_value = []
+        result = self.tms.get_tar_3()
+        self.assertEqual(
+            result,
+            {
+                "new": {"tickets": [self.ticket], "count": 1},
+                "assigned": {"tickets": [self.ticket], "count": 1},
+                "old": {"tickets": [], "count": 0},
+            },
+        )
+        self.interface_mock.print_tar_3_tickets.assert_called_once_with(result)
 
 
 def suite():

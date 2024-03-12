@@ -66,6 +66,7 @@ class TMS:
         self.interface.print_searched_keyword(keyword)
         tickets = self.data.search_tickets(keyword)
         if len(tickets) > 0:
+            found = True
             self.interface.print_search(keyword, tickets)
         else:
             self.interface.print_keyword_not_found(keyword)
