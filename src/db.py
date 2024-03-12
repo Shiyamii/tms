@@ -115,3 +115,35 @@ class DB(AbstractData):
         self.database_connection.execute(query, data)
 
         return True
+
+    def get_old_new_ticket(self) -> list[Ticket]:
+        query = """
+            SELECT t.id,t.name,t.description,t.ticket_type,t.state,t.responsible,t.date_created 
+            FROM ticket t 
+            WHERE t.state = %s AND t.date_created < NOW() - '3 days'::interval
+        """
+        data = (State.NEW.value,)
+        result = self.database_connection.fetch(query, data)
+        result = self.data_to_tickets(result)
+        return result
+
+    def get_old_assigned_ticket(self) -> list[Ticket]:
+        query = """
+            SELECT t.id,t.name,t.description,t.ticket_type,t.state,t.responsible,t.date_created 
+            FROM ticket t 
+            WHERE t.state = %s  AND t.date_created < NOW() - '10 days'::interval
+        """
+        data = (State.ASSIGNED.value,)
+        result = self.database_connection.fetch(query, data)
+        result = self.data_to_tickets(result)
+        return result
+
+    def get_old_ticket_list(self) -> list[Ticket]:
+        query = """
+            SELECT t.id,t.name,t.description,t.ticket_type,t.state,t.responsible,t.date_created 
+            FROM ticket t 
+            WHERE t.date_created < NOW() - '20 days'::interval
+        """
+        result = self.database_connection.fetch(query)
+        result = self.data_to_tickets(result)
+        return result

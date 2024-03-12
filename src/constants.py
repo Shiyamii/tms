@@ -3,6 +3,7 @@ from enum import Enum
 
 class State(Enum):
     NEW = "new"
+    ASSIGNED = "assigned"
     ANALYSIS = "analysis"
     SOLVED = "solved"
     IN_DELIVERY = "in_delivery"
@@ -16,6 +17,8 @@ class State(Enum):
     def get_enum(cls, value):
         if value == "new":
             return cls.NEW
+        if value == "assigned":
+            return cls.ASSIGNED
         if value == "analysis":
             return cls.ANALYSIS
         if value == "solved":

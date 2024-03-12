@@ -20,6 +20,7 @@ class GUI(AbstractInterface):
             [sg.Button("Close a ticket", key="close_ticket")],
             [sg.Button("Search keyword", key="search_keyword")],
             [sg.Button("Display issue", key="display_issue")],
+            [sg.Button("Get old ticket (TAR-3)", key="get_tar-3")],
             [sg.Button("Exit", key="exit")],
         ]
 
@@ -158,7 +159,8 @@ class GUI(AbstractInterface):
             [sg.Text("Ticket-ID"), sg.Input(key="case_id")],
             [sg.Text("State")],
             [
-                sg.Radio("Analysis", "state", key="analysis", default=True),
+                sg.Radio("Assigned", "state", key="assigned", default=True),
+                sg.Radio("Analysis", "state", key="analysis"),
                 sg.Radio("Solved", "state", key="solved"),
                 sg.Radio("In delivery", "state", key="in delivery"),
             ],
@@ -194,6 +196,8 @@ class GUI(AbstractInterface):
                         state = State.SOLVED.value
                     elif values["in delivery"]:
                         state = State.IN_DELIVERY.value
+                    elif values["assigned"]:
+                        state = State.ASSIGNED.value
                     if values["L1"]:
                         assign_name = Responsible.L1.value
                     elif values["L2"]:
@@ -239,7 +243,7 @@ class GUI(AbstractInterface):
 
             if event in (sg.WINDOW_CLOSED, "exit"):
                 self.window.close()
-                return "6"
+                return "7"
             elif event == "create_ticket":
                 self.window.close()
                 return "1"
@@ -255,6 +259,9 @@ class GUI(AbstractInterface):
             elif event == "display_issue":
                 self.window.close()
                 return "5"
+            elif event == "get_tar-3":
+                self.window.close()
+                return "6"
 
     def print_invalid_selection(self):
         sg.popup("Invalid selection")
@@ -300,3 +307,105 @@ class GUI(AbstractInterface):
 
     def print_id_already_exists(self):
         sg.popup("ID already exists")
+
+    def print_tar_3_tickets(self, tickets):
+        layout = [
+            [sg.Text("Ticket Management System", size=(30, 1), font=("Helvetica", 25))],
+            [sg.Text("Old tickets(TAR-3)", size=(20, 1), font=("Helvetica", 20))],
+            [
+                sg.Text("New tickets: "),
+                sg.Text(tickets["new"]["count"]),
+                sg.Button(
+                    "View tickets",
+                    key="view_new_tickets",
+                    disabled=tickets["new"]["count"] == 0,
+                ),
+            ],
+            [
+                sg.Text("Assigned tickets: "),
+                sg.Text(tickets["assigned"]["count"]),
+                sg.Button(
+                    "View tickets",
+                    key="view_assigned_tickets",
+                    disabled=tickets["assigned"]["count"] == 0,
+                ),
+            ],
+            [
+                sg.Text("All tickets: "),
+                sg.Text(tickets["all"]["count"]),
+                sg.Button(
+                    "View tickets",
+                    key="view_all_tickets",
+                    disabled=tickets["all"]["count"] == 0,
+                ),
+            ],
+            [sg.Button("Close", key="close")],
+        ]
+
+        self.window = sg.Window("Ticket Management System", layout)
+        running = True
+        while running:
+            event, values = self.window.read()
+            if event in (sg.WIN_CLOSED, "close"):
+                running = False
+            elif event == "view_new_tickets":
+                self.print_ticket_list(tickets["new"]["tickets"])
+                pass
+            elif event == "view_assigned_tickets":
+                self.print_ticket_list(tickets["assigned"]["tickets"])
+                pass
+            elif event == "view_all_tickets":
+                self.print_ticket_list(tickets["all"]["tickets"])
+                pass
+
+        self.window.close()
+
+    @staticmethod
+    def print_ticket_list(tickets, keyword=None):
+        current_ticket = 0
+        layout = [
+            [sg.Text("Ticket Management System", size=(30, 1), font=("Helvetica", 25))],
+            [
+                sg.Text(
+                    ("Tickets" if keyword is None else "Searched keyword: " + keyword),
+                    size=(20, 1),
+                    font=("Helvetica", 20),
+                )
+            ],
+            [sg.Text("Ticket-ID: "), sg.Text(tickets[current_ticket].id)],
+            [sg.Text("Customer name: "), sg.Text(tickets[current_ticket].name)],
+            [sg.Text("Case description: "), sg.Text(tickets[current_ticket].details)],
+            [sg.Text("Case type: "), sg.Text(tickets[current_ticket].type.value)],
+            [sg.Text("State: "), sg.Text(tickets[current_ticket].state.value)],
+            [
+                sg.Text("Responsible: "),
+                sg.Text(tickets[current_ticket].responsible.value),
+            ],
+            [sg.Text("Date created: "), sg.Text(tickets[current_ticket].date)],
+            [
+                sg.Button("Previous", key="previous", disabled=current_ticket == 0),
+                sg.Button(
+                    "Next", key="next", disabled=current_ticket == len(tickets) - 1
+                ),
+            ],
+            [sg.Button("Close", key="close")],
+        ]
+
+        window = sg.Window("Ticket Management System", layout)
+        running = True
+        while running:
+            event, values = window.read()
+            if event in (sg.WIN_CLOSED, "close"):
+                running = False
+            elif event == "previous":
+                if current_ticket > 0:
+                    current_ticket -= 1
+            elif event == "next":
+                if current_ticket < len(tickets) - 1:
+                    current_ticket += 1
+
+        window.close()
+
+    def print_search(self, keyword, tickets):
+        self.print_ticket_list(tickets, keyword)
+        pass

@@ -1,10 +1,13 @@
+from abc import ABC
 from typing import Optional
+
+from src.constants import State
 
 from src.ticket import Ticket
 from src.abstract_data import AbstractData
 
 
-class Backlog(AbstractData):
+class Backlog(AbstractData, ABC):
     def __init__(self):
         self.tickets: list[Ticket] = []
         self.deleted_tickets: list[Ticket] = []
@@ -56,3 +59,20 @@ class Backlog(AbstractData):
                 self.deleted_tickets.append(self.tickets.pop(i))
                 return True
         return False
+
+    def get_old_new_ticket(self) -> list[Ticket]:
+        return [
+            ticket
+            for ticket in self.tickets
+            if ticket.state == State.NEW and ticket.get_age().days >= 3
+        ]
+
+    def get_old_assigned_ticket(self) -> list[Ticket]:
+        return [
+            ticket
+            for ticket in self.tickets
+            if ticket.state == State.ASSIGNED and ticket.get_age().days >= 10
+        ]
+
+    def get_old_ticket_list(self) -> list[Ticket]:
+        return [ticket for ticket in self.tickets if ticket.get_age().days >= 20]

@@ -14,6 +14,11 @@ class Ticket:
         self.state = state
         self.responsible = responsible
 
+    def get_age(self):
+        return datetime.datetime.now() - datetime.datetime.strptime(
+            self.date, "%Y-%m-%d %H:%M:%S"
+        )
+
     def __eq__(self, other):
         return (
             self.id == other.id

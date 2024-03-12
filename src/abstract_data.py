@@ -27,3 +27,15 @@ class AbstractData(ABC):
     @abstractmethod
     def close_ticket(self, ticket) -> bool:
         pass
+
+    @abstractmethod
+    def get_old_new_ticket(self) -> list[Ticket]:
+        pass
+
+    @abstractmethod
+    def get_old_assigned_ticket(self) -> list[Ticket]:
+        pass
+
+    @abstractmethod
+    def get_old_ticket_list(self) -> list[Ticket]:
+        pass

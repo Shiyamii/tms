@@ -65,11 +65,9 @@ class TMS:
         found = False
         self.interface.print_searched_keyword(keyword)
         tickets = self.data.search_tickets(keyword)
-        for ticket in tickets:
-            self.interface.print_searched_ticket(ticket)
-            found = True
-
-        if not found:
+        if len(tickets) > 0:
+            self.interface.print_search(keyword, tickets)
+        else:
             self.interface.print_keyword_not_found(keyword)
         return found
 
@@ -80,6 +78,7 @@ class TMS:
             new_state_enum != State.ANALYSIS
             and new_state_enum != State.SOLVED
             and new_state_enum != State.IN_DELIVERY
+            and new_state_enum != State.ASSIGNED
         ):
             self.interface.print_invalid_state(new_state)
             return False
@@ -96,6 +95,20 @@ class TMS:
         ticket.responsible = new_assign_enum
         self.data.update_ticket(ticket)
         return True
+
+    def get_tar_3(self):
+        tickets_new_tar_3 = self.data.get_old_new_ticket()
+        tickets_assigned_tar_3 = self.data.get_old_assigned_ticket()
+        tickets_tar_3 = self.data.get_old_ticket_list()
+
+        return {
+            "new": {"tickets": tickets_new_tar_3, "count": len(tickets_new_tar_3)},
+            "assigned": {
+                "tickets": tickets_assigned_tar_3,
+                "count": len(tickets_assigned_tar_3),
+            },
+            "all": {"tickets": tickets_tar_3, "count": len(tickets_tar_3)},
+        }
 
     def main(self):
         # An infinite loop for menu that constantly asks user for their selection
@@ -126,6 +139,9 @@ class TMS:
                 if id is not None:
                     self.print_one_ticket(id)
             elif val == "6":  # Sortie
+                tickets = self.get_tar_3()
+                self.interface.print_tar_3_tickets(tickets)
+            elif val == "7":  # Sortie
                 break
             else:
                 self.interface.print_invalid_selection()

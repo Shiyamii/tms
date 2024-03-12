@@ -60,7 +60,8 @@ class Interface(AbstractInterface):
         print("3. Close a ticket")
         print("4. Search keyword")
         print("5. Display issue")
-        print("6. Sortie")
+        print("6. Get old tickets(TAR-3)")
+        print("7. Sortie")
 
         val = input("\nEnter your selection: ")
         return val
@@ -99,3 +100,26 @@ class Interface(AbstractInterface):
 
     def print_id_already_exists(self):
         print("ID already exists")
+
+    def print_tar_3_tickets(self, tickets):
+        print(str(tickets.get("new").get("count")) + " old NEW tickets: ")
+        for ticket in tickets.get("new").get("tickets"):
+            self.print_one_ticket(ticket)
+            print("-----------------------")
+        print(str(tickets.get("assigned").get("count")) + " old ASSIGNED tickets: ")
+        for ticket in tickets.get("assigned").get("tickets"):
+            self.print_one_ticket(ticket)
+            print("-----------------------")
+
+        print(str(tickets.get("all").get("count")) + " old tickets: ")
+        for ticket in tickets.get("all").get("tickets"):
+            self.print_one_ticket(ticket)
+            print("=======================")
+
+    def print_search(self, keyword, tickets):
+        print("Searched keyword: ", keyword)
+        for ticket in tickets:
+            self.print_one_ticket(ticket)
+            print("-----------------------")
+        print("Total tickets: ", len(tickets))
+        print("=======================")

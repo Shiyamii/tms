@@ -91,3 +91,11 @@ class AbstractInterface(ABC):
     @abstractmethod
     def print_id_already_exists(self):
         pass
+
+    @abstractmethod
+    def print_tar_3_tickets(self, tickets):
+        pass
+
+    @abstractmethod
+    def print_search(self, keyword, tickets):
+        pass
