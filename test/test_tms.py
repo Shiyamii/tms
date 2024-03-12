@@ -258,10 +258,12 @@ class tar3Test(unittest.TestCase):
             {
                 "new": {"tickets": [self.ticket], "count": 1},
                 "assigned": {"tickets": [self.ticket], "count": 1},
-                "old": {"tickets": [], "count": 0},
+                "all": {"tickets": [], "count": 0},
             },
         )
-        self.interface_mock.print_tar_3_tickets.assert_called_once_with(result)
+        self.backlog_mock.get_old_new_ticket.assert_called_once()
+        self.backlog_mock.get_old_assigned_ticket.assert_called_once()
+        self.backlog_mock.get_old_ticket_list.assert_called_once()
 
 
 def suite():
