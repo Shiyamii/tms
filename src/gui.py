@@ -6,12 +6,22 @@ from src.ticket import Ticket
 
 
 class GUI(AbstractInterface):
+    """
+    This class represents the graphical user interface (GUI) for the Ticket Management System.
+    It provides methods for displaying various forms and messages to the user.
+    """
 
     def __init__(self):
+        """
+        Initialize the GUI with a default layout.
+        """
         self.window = sg.Window("Ticket Management System", self.get_default_layout())
 
     @staticmethod
     def get_default_layout():
+        """
+        Returns the default layout for the GUI.
+        """
         return [
             [sg.Text("Ticket Management System", size=(30, 1), font=("Helvetica", 25))],
             [sg.Text("Choose an action", size=(20, 1), font=("Helvetica", 20))],
@@ -25,9 +35,17 @@ class GUI(AbstractInterface):
         ]
 
     def print_close_ticket(self, case_id):
+        """
+        Display a message indicating that a ticket has been closed.
+
+        :param case_id: The ID of the closed ticket.
+        """
         sg.popup("Close ticket {}".format(case_id))
 
     def print_form_close_ticket(self):
+        """
+        Display a form for closing a ticket and return the ID of the ticket to be closed.
+        """
         layout = [
             [sg.Text("Ticket Management System", size=(30, 1), font=("Helvetica", 25))],
             [sg.Text("Close new ticket", size=(20, 1), font=("Helvetica", 20))],
@@ -55,13 +73,24 @@ class GUI(AbstractInterface):
         return value
 
     def print_l1_close_ticket(self):
+        """
+        Display a message indicating that only L1 can close the ticket.
+        """
         sg.popup("Only L1 can close the ticket")
 
     def print_created_ticket(self, ticket: Ticket):
+        """
+        Display a message indicating that a ticket has been created.
+
+        :param ticket: The created ticket.
+        """
         sg.popup("Ticket created: ", ticket.id)
         pass
 
     def print_form_create_ticket(self):
+        """
+        Display a form for creating a ticket and return the details of the ticket to be created.
+        """
         layout = [
             [sg.Text("Ticket Management System", size=(30, 1), font=("Helvetica", 25))],
             [sg.Text("Create new ticket", size=(20, 1), font=("Helvetica", 20))],
@@ -109,12 +138,25 @@ class GUI(AbstractInterface):
         return case_id, name, description, ticket_type
 
     def print_searched_ticket(self, ticket: Ticket):
+        """
+        Display the details of a searched ticket.
+
+        :param ticket: The searched ticket.
+        """
         self.print_one_ticket(ticket)
 
     def print_ticket_invalid_id(self, case_id):
+        """
+        Display a message indicating that a ticket ID is invalid.
+
+        :param case_id: The invalid ticket ID.
+        """
         sg.popup("Invalid id {}: ticket not found".format(case_id))
 
     def print_form_search_ticket(self):
+        """
+        Display a form for searching a ticket and return the keyword to be searched.
+        """
         layout = [
             [sg.Text("Ticket Management System", size=(30, 1), font=("Helvetica", 25))],
             [sg.Text("Search issue", size=(20, 1), font=("Helvetica", 20))],
@@ -142,17 +184,37 @@ class GUI(AbstractInterface):
         return keyword
 
     def print_searched_keyword(self, keyword):
+        """
+        Display a message indicating that a keyword has been searched.
+
+        :param keyword: The searched keyword.
+        """
         sg.popup("Search keyword {}".format(keyword))
 
     def print_keyword_not_found(self, keyword):
+        """
+        Display a message indicating that a keyword was not found.
+
+        :param keyword: The keyword that was not found.
+        """
         sg.popup("Keyword {} not found".format(keyword))
 
     def print_updated_ticket(self, case_id, new_assign, new_state):
+        """
+        Display a message indicating that a ticket has been updated.
+
+        :param case_id: The ID of the updated ticket.
+        :param new_assign: The new assignee of the ticket.
+        :param new_state: The new state of the ticket.
+        """
         sg.popup(
             "Assign ticket {} to {} to state {}".format(case_id, new_assign, new_state)
         )
 
     def print_form_update_ticket(self):
+        """
+        Display a form for updating a ticket and return the details of the ticket to be updated.
+        """
         layout = [
             [sg.Text("Ticket Management System", size=(30, 1), font=("Helvetica", 25))],
             [sg.Text("Update ticket", size=(20, 1), font=("Helvetica", 20))],
@@ -208,6 +270,9 @@ class GUI(AbstractInterface):
         return case_id, state, assign_name
 
     def print_one_form_ticket(self):
+        """
+        Display a form for viewing a single ticket and return the ID of the ticket to be viewed.
+        """
         layout = [
             [sg.Text("Ticket Management System", size=(30, 1), font=("Helvetica", 25))],
             [sg.Text("Display issue", size=(20, 1), font=("Helvetica", 20))],
@@ -235,6 +300,9 @@ class GUI(AbstractInterface):
         return value
 
     def print_main_form(self):
+        """
+        Display the main form of the GUI and return the action selected by the user.
+        """
         self.window = None
         self.window = sg.Window("Ticket Management System", self.get_default_layout())
 
@@ -264,9 +332,17 @@ class GUI(AbstractInterface):
                 return "6"
 
     def print_invalid_selection(self):
+        """
+        Display a message indicating that an invalid selection has been made.
+        """
         sg.popup("Invalid selection")
 
     def print_one_ticket(self, ticket: Ticket):
+        """
+        Display the details of a single ticket.
+
+        :param ticket: The ticket to be displayed.
+        """
         layout = [
             [sg.Text("Ticket Management System", size=(30, 1), font=("Helvetica", 25))],
             [sg.Text("Display issue", size=(20, 1), font=("Helvetica", 20))],
@@ -288,27 +364,57 @@ class GUI(AbstractInterface):
                 break
 
     def print_invalid_id(self):
+        """
+        Display a message indicating that a ticket ID is invalid.
+        """
         sg.popup("ID is not in format Case-XXX where X represents a digit.")
 
     def print_invalid_name(self):
+        """
+        Display a message indicating that a name is invalid.
+        """
         sg.popup("Name is empty or is not alphanumeric")
 
     def print_invalid_details(self):
+        """
+        Display a message indicating that the details of a ticket are invalid.
+        """
         sg.popup("Description are empty, please fill all the details.")
 
     def print_invalid_type(self):
+        """
+        Display a message indicating that a ticket type is invalid.
+        """
         sg.popup("Type is not PR or IR.")
 
     def print_invalid_state(self, new_state):
+        """
+        Display a message indicating that the state is invalid.
+
+        :param new_state: The invalid state.
+        """
         sg.popup("Invalid state {}".format(new_state))
 
     def print_invalid_responsible(self, new_assign):
+        """
+        Display a message indicating that an assignee is invalid.
+
+        :param new_assign: The invalid assignee.
+        """
         sg.popup("Invalid assign {}".format(new_assign))
 
     def print_id_already_exists(self):
+        """
+        Display a message indicating that a ticket ID already exists.
+        """
         sg.popup("ID already exists")
 
     def print_tar_3_tickets(self, tickets):
+        """
+        Display the details of old tickets. (TAR-3)
+
+        :param tickets: The old tickets to be displayed.
+        """
         layout = [
             [sg.Text("Ticket Management System", size=(30, 1), font=("Helvetica", 25))],
             [sg.Text("Old tickets(TAR-3)", size=(20, 1), font=("Helvetica", 20))],
@@ -362,6 +468,12 @@ class GUI(AbstractInterface):
 
     @staticmethod
     def print_ticket_list(tickets, keyword=None):
+        """
+        Display a list of tickets.
+
+        :param tickets: The tickets to be displayed.
+        :param keyword: The keyword used to search the tickets (optional).
+        """
         current_ticket = 0
         layout = [
             [sg.Text("Ticket Management System", size=(30, 1), font=("Helvetica", 25))],
@@ -407,5 +519,11 @@ class GUI(AbstractInterface):
         window.close()
 
     def print_search(self, keyword, tickets):
+        """
+        Display the results of a ticket search.
+
+        :param keyword: The keyword used to search the tickets.
+        :param tickets: The tickets found in the search.
+        """
         self.print_ticket_list(tickets, keyword)
         pass
